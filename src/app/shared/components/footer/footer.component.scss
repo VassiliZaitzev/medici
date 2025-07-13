@@ -1,0 +1,23 @@
+.footer a {
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #20B2FF;
+}
+
+.footer h6 {
+  color: #20B2FF;
+}
+
+
+footer.footer {
+  // position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999; /* Asegúrate de que esté por encima del contenido si es necesario */
+  background-color: #f8f9fa; /* O el color que estés usando */
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Opcional para que se vea bien */
+}

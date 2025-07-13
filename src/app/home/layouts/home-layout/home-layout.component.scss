@@ -1,0 +1,22 @@
+.backLayout{
+  background-color: #f6f8fb;;
+}
+
+
+/* Asegura que el body y html ocupen toda la altura */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* El app-root debe usar flexbox en columna */
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* main crece para empujar el footer hacia abajo */
+main {
+  flex: 1;
+}
