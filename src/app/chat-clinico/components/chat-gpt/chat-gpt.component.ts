@@ -14,16 +14,20 @@ export class ChatGptComponent {
   inputText = '';
   loading = false;
 
-  public chatgptService = inject(ChatService);
-
   private messageQueue: string[] = [];
   private isProcessing = false;
 
-  sendMessage() {
-    if (!this.inputText.trim()) return;
+  public chatgptService = inject(ChatService);
 
-    this.messages.push({ text: this.inputText, from: 'user' });
-    this.messageQueue.push(this.inputText);
+  public fase: number = 0;
+
+  sendMessage() {
+    if (this.loading || !this.inputText.trim()) return;
+
+    const userMessage = this.inputText.trim();
+    this.messages.push({ text: userMessage, from: 'user' });
+
+    this.messageQueue.push(userMessage);
     this.inputText = '';
 
     this.processQueue();
@@ -45,12 +49,12 @@ export class ChatGptComponent {
       error: (err) => {
         if (err.status === 429) {
           this.messages.push({
-            text: 'Has hecho demasiadas solicitudes en poco tiempo. Espera unos segundos e intenta nuevamente.',
+            text: '⚠️ Has hecho demasiadas solicitudes. Espera unos segundos e intenta nuevamente.',
             from: 'bot',
           });
         } else {
           this.messages.push({
-            text: 'Error al conectar con ChatGPT.',
+            text: '❌ Error al conectar con ChatGPT.',
             from: 'bot',
           });
         }
@@ -59,10 +63,10 @@ export class ChatGptComponent {
         this.isProcessing = false;
         this.loading = false;
 
-        // Delay entre solicitudes para respetar rate limit
+        // Esperar 1.5 segundos antes de procesar el siguiente para evitar 429
         setTimeout(() => {
           this.processQueue();
-        }, 1500); // espera 1.5 segundos antes de procesar el siguiente
+        }, 1500);
       },
     });
   }
