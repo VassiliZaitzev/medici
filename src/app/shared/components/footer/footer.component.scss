@@ -1,23 +1,81 @@
-.footer a {
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
+.footer {
+  /* blanco */
+  background-color: #ffffff !important;
+  /* menta oscura */
+  color:            #00897B !important;
+  /* pt-5 pb-4 */
+  padding:         3rem 0 1.5rem;
 
-.footer a:hover {
-  color: #20B2FF;
-}
+  /* separación entre columnas */
+  .row > [class*="col-"] {
+    margin-bottom: 1.5rem;
+  }
+  
 
-.footer h6 {
-  color: #20B2FF;
-}
+  /* título de cada sección */
+  h6 {
+    font-family:    'Poppins', sans‑serif;
+    font-weight:    500;
+    font-size:      1rem;
+    text-transform: uppercase;
+    margin-bottom:  0.75rem;
+    /* menta oscura */
+    color:          #00897B;
+  }
 
+  /* línea decorativa bajo el título */
+  hr {
+    width:            60px;
+    height:           2px;
+    /* menta clara */
+    background-color: #4DB6AC;
+    border:           none;
+    margin:           0 auto 1rem;
+  }
 
-footer.footer {
-  // position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 999; /* Asegúrate de que esté por encima del contenido si es necesario */
-  background-color: #f8f9fa; /* O el color que estés usando */
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.1); /* Opcional para que se vea bien */
+  /* listado de enlaces */
+  ul {
+    list-style: none;
+    padding:    0;
+
+    li {
+      margin-bottom: 0.5rem;
+
+      a {
+        /* menta oscura */
+        color:           #00897B !important;
+        text-decoration: none;
+        transition:      color 0.2s ease;
+
+        &:hover {
+          /* menta clara */
+          color:           #4DB6AC;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  /* alineados responsivos */
+  .text-center {
+    text-align: center !important;
+  }
+  .text-md-start {
+    @media (min-width: 768px) {
+      text-align: left !important;
+    }
+  }
+
+  /* logo y copyright */
+  img {
+    width:         100px;
+    margin-bottom: 0.5rem;
+  }
+  p {
+    font-size: 0.875rem;
+    /* gris oscuro */
+    color:     rgba(0, 0, 0, 0.6);
+    margin:    0;
+  }
+  
 }

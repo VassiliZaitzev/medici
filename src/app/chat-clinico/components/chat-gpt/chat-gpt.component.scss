@@ -1,7 +1,11 @@
+/* Estilos completos del chat para copiar y pegar */
+
 .chat-container {
   max-width: 600px;
   margin: 20px auto;
-  border: 1px solid #ccc;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   height: 80vh;
@@ -9,49 +13,81 @@
 }
 
 .messages {
-  flex-grow: 1;
+  flex: 1;
   overflow-y: auto;
   margin-bottom: 10px;
+  padding-right: 4px;
+
+  /* Nuevo: convertimos en flex-col para que funcione align-self */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .messages div {
+  display: inline-block;      /* ancho según contenido */
   padding: 8px 12px;
-  border-radius: 15px;
-  margin: 5px 0;
-  // max-width: 70%;
+  border-radius: 16px;
+  word-wrap: break-word;
+  max-width: 70%;             /* no crece demasiado */
 }
 
 .user {
-  background-color: #0084ff;
-  color: white;
-  align-self: flex-end;
+  background-color: #00897B;   /* mint oscuro */
+  color: #ffffff;
+  align-self: flex-end;        /* burbuja a la derecha */
 }
 
 .bot {
-  background-color: #e5e5ea;
-  color: black;
-  align-self: flex-start;
+  background-color: #E0F7F5;   /* mint clarito */
+  color: #004D45;              /* variante oscura */
+  align-self: flex-start;      /* burbuja a la izquierda */
 }
 
 .input-form {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
-input[type='text'] {
-  flex-grow: 1;
-  padding: 10px;
+input[type="text"] {
+  flex: 1;
+  padding: 8px 12px;
   font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background: #f8f8f8;
+  outline: none;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: #00897B;
+  }
 }
 
 button {
-  padding: 10px 20px;
+  padding: 8px 16px;
   font-size: 1rem;
+  background: #00897B;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
   cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: #006F65;
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
 }
 
 .loading {
   font-style: italic;
-  color: gray;
+  color: #666;
   text-align: center;
+  margin-top: 8px;
 }

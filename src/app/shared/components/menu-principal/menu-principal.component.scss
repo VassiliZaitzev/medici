@@ -1,25 +1,114 @@
-.navbar {
-  background-color: #ffffff;
-  color: #20B2FF;
-}
+$color-primary:         #00897B;         // menta oscura
+$color-primary-light:   #4DB6AC;         // menta clara
+$navbar-bg:             #ffffff;         // fondo del navbar
+$navbar-text:           $color-primary;  // color de los links
+$navbar-height:         110px;            // altura del navbar
+$logo-height:           100px;            // altura del logo
 
-.navbar-brand {
-  font-weight: bold;
-  font-size: 1.4rem;
-  color: #20B2FF;
-}
+$font-family-nav:       'Poppins', sans‑serif;
+$font-weight-nav:       500;
+$nav-link-font-size:    1rem;            // 16px
+$nav-link-spacing:      1.5rem;          // espacio horizontal entre links
+.navbar-custom {
+  background-color: $navbar-bg;
+  height: $navbar-height;
+  padding: 0;
+  overflow: visible;
+  transition: background-color 0.2s ease;
 
-.nav-link {
-    display: block;
-    padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
-    font-size: var(--bs-nav-link-font-size);
-    font-weight: var(--bs-nav-link-font-weight);
-    // color: var(--bs-nav-link-color);
-    color: #20B2FF;
-    text-decoration: none;
-    background: 0 0;
-    border: 0;
-    transition: color .15s ease-in-out,
-    background-color .15s ease-in-out,
-    border-color .15s ease-in-out;
+  // Contenedor relativo para poder posicionar el UL
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
+  }
+
+  // Logo sin glow ni blur
+  .logo {
+    height: $logo-height;
+    margin: 0.5rem;
+    box-shadow: none !important;
+    filter: none !important;
+    position: relative;
+    z-index: 2; // encima del nav absoluto
+  }
+
+  // Toggler (icono de menú) oscuro sobre fondo claro
+  .navbar-toggler {
+    padding: 0.25rem 0.5rem;
+    border-color: $navbar-text;
+
+    .navbar-toggler-icon {
+      filter: invert(0);
+    }
+  }
+
+  // Sólo en pantallas ≥992px centramos de forma absoluta
+  @media (min-width: 992px) {
+    // Habilita el flex para que funcione el collapse
+    .collapse.navbar-collapse {
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      flex: 0 1 auto;  // que no se estire
+    }
+
+    // UL absolutamente centrado respecto a .container
+    .navbar-nav {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      height: 100%;
+      z-index: 1;
+
+      .nav-item {
+        height: 100%;
+        display: flex;
+        align-items: center;
+
+        .nav-link {
+          font-family: $font-family-nav;
+          font-weight: $font-weight-nav;
+          font-size: $nav-link-font-size;
+          letter-spacing: 0.5px;
+          margin: 0 $nav-link-spacing;
+          display: flex;
+          align-items: center;
+          height: 100%;
+          color: $navbar-text !important;
+          text-decoration: none;
+          transition: color 0.2s ease, text-decoration 0.2s ease;
+
+          &:hover {
+            text-decoration: underline;
+            color: $navbar-text !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Dropdown sobre fondo blanco (móvil y desktop)
+  .dropdown-menu {
+    background-color: $navbar-bg;
+    border: none;
+    margin-top: 0;
+
+    .dropdown-item {
+      color: $navbar-text;
+      transition: color 0.2s ease, text-decoration 0.2s ease;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        color: $navbar-text;
+      }
+    }
+  }
 }
