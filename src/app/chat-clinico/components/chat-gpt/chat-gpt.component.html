@@ -3,7 +3,7 @@
     <div *ngFor="let msg of messages" class="text-end"
       [ngClass]="{'text-end': msg.from === 'user', 'gpt': msg.from === 'bot'}" [class.user]="msg.from === 'user'"
       [class.bot]="msg.from === 'bot'">
-      {{ msg.text }}
+      {{ msg.text }} <span class="timestamp" style="font-size: xx-small; margin-left: 7px;">{{ this.fechaActual| date:'hh:mm a' }}</span>
     </div>
   </div>
 
@@ -11,7 +11,9 @@
     <input type="text" [(ngModel)]="inputText" name="message" placeholder="Escribe un mensaje..." [disabled]="loading"
       autocomplete="off" />
     <button type="submit" [disabled]="loading || !inputText.trim()">Enviar</button>
+
   </form>
 
   <div *ngIf="loading" class="loading">Escribiendo...</div>
+  <!-- <button type="button" class="btn btn-danger" (click)="listarChat()">Listar Chat</button> -->
 </div>

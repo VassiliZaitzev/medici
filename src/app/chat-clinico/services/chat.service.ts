@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import { Chat } from '../interfaces/chat.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -14,9 +15,9 @@ export class ChatService {
 
   public readonly chatKey: string;
 
-  constructor() {
-    console.log('ChatService inicializado');
+  public urlBase: string = 'https://localhost:7172/api/Chat';
 
+  constructor() {
     const savedKey = localStorage.getItem('chatgpt_key');
     if (savedKey) {
       this.chatKey = savedKey;
@@ -25,8 +26,6 @@ export class ChatService {
       localStorage.setItem('chatgpt_key', newKey);
       this.chatKey = newKey;
     }
-
-    console.log('chatgpt_key:', this.chatKey);
   }
 
   sendMessage(message: string): Observable<any> {
@@ -42,5 +41,13 @@ export class ChatService {
     };
 
     return this.http.post(this.apiUrl, body, { headers });
+  }
+
+  listarChat(codigo: string): Observable<Chat[]> {
+    return this.http.get<Chat[]>(`${this.urlBase}/ListarChat/${codigo}`).pipe(
+      catchError(() => {
+        return of([]);
+      })
+    );
   }
 }

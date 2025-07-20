@@ -13,7 +13,7 @@ export class ChatGptComponent {
   messages: Message[] = [];
   inputText = '';
   loading = false;
-
+  public fechaActual = new Date();
   private messageQueue: string[] = [];
   private isProcessing = false;
 
@@ -68,6 +68,12 @@ export class ChatGptComponent {
           this.processQueue();
         }, 1500);
       },
+    });
+  }
+
+  listarChat() {
+    this.chatgptService.listarChat('AC1').subscribe((res) => {
+      console.log(res);
     });
   }
 }
