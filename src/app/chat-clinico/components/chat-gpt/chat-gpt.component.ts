@@ -1,16 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
-interface Message {
-  text: string;
-  from: 'user' | 'bot';
-}
+import { Chat } from '../../interfaces/chat.interface';
+
 @Component({
   selector: 'app-chat-gpt',
   templateUrl: './chat-gpt.component.html',
   styleUrl: './chat-gpt.component.scss',
 })
-export class ChatGptComponent {
-  messages: Message[] = [];
+export class ChatGptComponent implements OnInit {
   inputText = '';
   loading = false;
   public fechaActual = new Date();
@@ -20,16 +17,35 @@ export class ChatGptComponent {
   public chatgptService = inject(ChatService);
 
   public fase: number = 0;
+  public chatRegistrado: Chat[] = [];
+  private savedKey = localStorage.getItem('chatgpt_key');
+
+  ngOnInit() {
+    if (!this.savedKey) return;
+    this.chatgptService
+      .listarChat(this.savedKey.toString())
+      .subscribe((res) => {
+        this.chatRegistrado = res;
+      });
+  }
 
   sendMessage() {
     if (this.loading || !this.inputText.trim()) return;
 
     const userMessage = this.inputText.trim();
-    this.messages.push({ text: userMessage, from: 'user' });
 
     this.messageQueue.push(userMessage);
     this.inputText = '';
 
+    let chat: Chat = {
+      idChat: 0,
+      codigoCliente: this.savedKey || '',
+      mensaje: userMessage,
+      idTipoMensaje: 0,
+      fecha: this.fechaActual,
+    };
+
+    this.chatRegistrado.push(chat);
     this.processQueue();
   }
 
@@ -44,21 +60,22 @@ export class ChatGptComponent {
     this.chatgptService.sendMessage(nextMessage!).subscribe({
       next: (res) => {
         const reply = res.choices[0].message.content;
-        this.messages.push({ text: reply, from: 'bot' });
+
+        let chat: Chat = {
+          idChat: 0,
+          codigoCliente: this.savedKey || '',
+          mensaje: reply,
+          idTipoMensaje: 1,
+          fecha: this.fechaActual,
+        };
+
+        this.chatRegistrado.push(chat);
+        localStorage.setItem(
+          'chatStorage',
+          JSON.stringify(this.chatRegistrado)
+        );
       },
-      error: (err) => {
-        if (err.status === 429) {
-          this.messages.push({
-            text: '⚠️ Has hecho demasiadas solicitudes. Espera unos segundos e intenta nuevamente.',
-            from: 'bot',
-          });
-        } else {
-          this.messages.push({
-            text: '❌ Error al conectar con ChatGPT.',
-            from: 'bot',
-          });
-        }
-      },
+      error: (err) => {},
       complete: () => {
         this.isProcessing = false;
         this.loading = false;
@@ -68,12 +85,6 @@ export class ChatGptComponent {
           this.processQueue();
         }, 1500);
       },
-    });
-  }
-
-  listarChat() {
-    this.chatgptService.listarChat('AC1').subscribe((res) => {
-      console.log(res);
     });
   }
 }

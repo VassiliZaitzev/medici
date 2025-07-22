@@ -3,5 +3,5 @@ export interface Chat {
   codigoCliente: string;
   mensaje: string;
   idTipoMensaje: number;
-  fecha: null;
+  fecha: Date | null;
 }

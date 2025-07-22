@@ -1,9 +1,9 @@
 <div class="chat-container">
   <div class="messages">
-    <div *ngFor="let msg of messages" class="text-end"
-      [ngClass]="{'text-end': msg.from === 'user', 'gpt': msg.from === 'bot'}" [class.user]="msg.from === 'user'"
-      [class.bot]="msg.from === 'bot'">
-      {{ msg.text }} <span class="timestamp" style="font-size: xx-small; margin-left: 7px;">{{ this.fechaActual| date:'hh:mm a' }}</span>
+    <div *ngFor="let msg of chatRegistrado" class="text-end"
+      [ngClass]="{'text-end': msg.idTipoMensaje === 0, 'gpt': msg.idTipoMensaje === 1}" [class.user]="msg.idTipoMensaje === 0"
+      [class.bot]="msg.idTipoMensaje === 1">
+      {{ msg.mensaje }} <span class="timestamp" style="font-size: xx-small; margin-left: 7px;">{{ this.fechaActual| date:'hh:mm a' }}</span>
     </div>
   </div>
 
@@ -15,5 +15,5 @@
   </form>
 
   <div *ngIf="loading" class="loading">Escribiendo...</div>
-  <!-- <button type="button" class="btn btn-danger" (click)="listarChat()">Listar Chat</button> -->
+
 </div>
