@@ -6,23 +6,22 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () =>
-      import('./chat-clinico/chat-clinico.module').then(
-        (m) => m.ChatClinicoModule
-      ),
+      import('./home/home.module').then(m => m.HomeModule)
   },
-  // {
-  //   path: 'home',
-  //   loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
-  // },
+  {
+    path: 'chat',
+    loadChildren: () =>
+      import('./chat-clinico/chat-clinico.module').then(m => m.ChatClinicoModule)
+  },
   {
     path: '',
     redirectTo: 'home',
-    pathMatch: 'full',
+    pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'home',
-  },
+    redirectTo: 'home'
+  }
 ];
 
 @NgModule({
