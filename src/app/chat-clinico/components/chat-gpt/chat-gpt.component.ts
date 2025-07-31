@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { Chat } from '../../interfaces/chat.interface';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-chat-gpt',
@@ -19,6 +20,10 @@ export class ChatGptComponent implements OnInit {
   public fase: number = 0;
   public chatRegistrado: Chat[] = [];
   private savedKey = localStorage.getItem('chatgpt_key');
+
+  pdfBase64Safe!: SafeResourceUrl;
+
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit() {
     if (!this.savedKey) return;
@@ -84,6 +89,30 @@ export class ChatGptComponent implements OnInit {
         setTimeout(() => {
           this.processQueue();
         }, 1500);
+      },
+    });
+  }
+
+  obtenerDocumento() {
+    this.chatgptService.obtenerDocumento().subscribe({
+      next: (res) => {
+        console.log(res);
+        console.log('res');
+        const rawBase64 = res;
+        const cleaned = rawBase64.replace(/\s/g, '');
+
+        const byteCharacters = atob(cleaned);
+        const byteNumbers = Array.from(byteCharacters, (c) => c.charCodeAt(0));
+        const byteArray = new Uint8Array(byteNumbers);
+
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob); // ✅ más confiable que base64 en src
+
+        this.pdfBase64Safe =
+          this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+      },
+      error: (err) => {
+        console.error('Error al obtener el documento:', err);
       },
     });
   }

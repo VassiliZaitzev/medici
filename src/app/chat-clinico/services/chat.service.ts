@@ -15,7 +15,7 @@ export class ChatService {
 
   public readonly chatKey: string;
 
-  public urlBase: string = 'https://localhost:7172/api/Chat';
+  public urlBase: string = 'https://localhost:7172/api';
 
   constructor() {
     const savedKey = localStorage.getItem('chatgpt_key');
@@ -44,10 +44,27 @@ export class ChatService {
   }
 
   listarChat(codigo: string): Observable<Chat[]> {
-    return this.http.get<Chat[]>(`${this.urlBase}/ListarChat/${codigo}`).pipe(
-      catchError(() => {
-        return of([]);
-      })
+    return this.http
+      .get<Chat[]>(`${this.urlBase}/Chat/ListarChat/${codigo}`)
+      .pipe(
+        catchError(() => {
+          return of([]);
+        })
+      );
+  }
+
+  obtenerDocumento(): Observable<string> {
+    return this.http.get<string>(
+      'https://localhost:7172/api/Pdf/ObtenerDocumento',
+      { responseType: 'text' as 'json' }
     );
   }
+
+  /*obtenerDocumento(): Observable<string> {
+    return this.http.get<string>(`${this.urlBase}/Pdf/ObtenerDocumento`).pipe(
+      catchError(() => {
+        return of('');
+      })
+    );
+  }*/
 }
