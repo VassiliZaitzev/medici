@@ -61,9 +61,11 @@ export class ChatGptComponent implements OnInit {
     this.loading = true;
 
     const nextMessage = this.messageQueue.shift();
-
-    this.chatgptService.sendMessage(nextMessage!).subscribe({
+    let condicion =
+      'RESPONDE EXCLUSIVAMENTE CON TRUE O FALSE. El siguiente mensaje debe analizarse para saber si indica explícitamente que la persona quiere realizarse exámenes médicos o clínicos, o que quiere pedir exámenes en una clínica. NO respondas con explicaciones. SOLO responde TRUE si el mensaje pide de forma clara exámenes médicos. En cualquier otro caso, responde FALSE. Mensaje: ';
+    this.chatgptService.sendMessage(condicion + nextMessage!).subscribe({
       next: (res) => {
+        console.log(res);
         const reply = res.choices[0].message.content;
 
         let chat: Chat = {
