@@ -2,156 +2,109 @@
   <div class="container">
     <h1 class="display-4">Tus órdenes médicas, a un clic</h1>
     <p class="lead">
-      Accede a exámenes preventivos y telemedicina rápida, económica y 100 % online.
+      Accede a exámenes preventivos y telemedicina rápida, económica y 100 % online.
     </p>
-    <a href="/registro" class="btn btn-light btn-lg me-2">Crear cuenta</a>
-    <a href="/login" class="btn btn-outline-light btn-lg">Ingresar</a>
+    <a [routerLink]="['/registro']" class="btn btn-light btn-lg me-2">Crear cuenta</a>
+    <a [routerLink]="['/login']" class="btn btn-outline-light btn-lg">Ingresar</a>
   </div>
 </section>
 
 <section class="py-5">
   <div class="container">
-    <h2 class="testimonials__title text-center fs-2 mb-5">
-      Resultados que marcan la diferencia
-    </h2>
+    <h2 class="testimonials__title text-center fs-2 mb-5">Resultados que marcan la diferencia</h2>
 
     <div class="row justify-content-center align-items-center gx-0">
-      <!-- 1) Imagen del doctor -->
       <div class="col-md-4 text-center mb-4 mb-md-0">
         <img src="assets/doctor.png" class="doctor-img rounded-circle img-fluid mx-auto d-block" alt="Dr. Ramón Kong">
-
         <p class="mt-3 mb-0">
           <strong>Dr. Ramón Kong</strong><br>
           Médico urgenciólogo, U. de Chile
         </p>
       </div>
 
-      <!-- 2) Lista de “ticks”, pegada a la imagen -->
-      <div class="col-md-5 ps-md-0">
-        <ul class="list-unstyled mb-4 fs-4">
-          <li class="py-1">✔ Atención 24/7</li>
-          <li class="py-1">✔ Cobertura nacional</li>
-          <li class="py-1">✔ +10 000 visitas anuales</li>
+      <div class="col-md-5 ps-md-0 ticks-col">
+        <ul>
+          <li>✔ Atención 24/7</li>
+          <li>✔ Cobertura nacional</li>
+          <li>✔ +10 000 visitas anuales</li>
         </ul>
-        <!-- aquí aplicamos fs-4 al párrafo -->
-        <p class=" mb-0 fs-4">
-          Accede a órdenes médicas rápidas y asequibles, y lleva tu salud en una bitácora personal.
-        </p>
+        <p>Accede a órdenes médicas rápidas y asequibles, y lleva tu salud en una bitácora personal.</p>
       </div>
     </div>
   </div>
 </section>
 
-
 <section class="home__steps py-5">
   <div class="container home__container">
-    <h2 class="section__title text-center mb-5">
-      Tu salud en 3 simples pasos
-    </h2>
+    <h2 class="section__title text-center mb-5">Tu salud en 3 simples pasos</h2>
     <div class="row text-center">
       <div class="col-md-4">
         <div class="step-card">
           <h3>01. Crea tu cuenta</h3>
           <p>Perfil listo en 2 minutos. Fácil y seguro.</p>
           <br>
-          <img src="assets/crea_tu_cuenta.png" alt="Logo Medici" style="width: 200px;" class="mb-2">
-
+          <img src="assets/crea_tu_cuenta.png" alt="Crea tu cuenta" class="step-img mb-2">
         </div>
       </div>
       <div class="col-md-4">
         <div class="step-card">
           <h3>02. Selecciona lo que necesitas</h3>
           <p>Elige órdenes o telemedicina según tus necesidades.</p>
-          <img src="assets/selecciona_el_control.png" alt="Logo Medici" style="width: 200px;" class="mb-2">
-
+          <img src="assets/selecciona_el_control.png" alt="Selecciona el control" class="step-img mb-2">
         </div>
       </div>
       <div class="col-md-4">
         <div class="step-card">
           <h3>03. Controla tu salud</h3>
           <p>Consulta tu historial de órdenes y citas en tu bitácora.</p>
-          <div>
-            <img src="assets/controla_tu_salud.png" alt="Logo Medici" style="width: 200px;" class="mb-2">
-          </div>
+          <img src="assets/controla_tu_salud.png" alt="Controla tu salud" class="step-img mb-2">
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- Sexo es opcional: los botones ya NO muestran error ni bloquean el submit -->
 <section class="backgroundMedici text-white py-5 text-center">
   <div class="container">
     <h2>Elige el examen adecuado para ti</h2>
     <p>Ofrecemos paquetes a medida según tus necesidades para:</p>
 
     <div class="d-flex justify-content-center gap-3 mb-4">
-      <button *ngFor="let s of sexos" class="paquete-btn" (click)="onSelectSexo(s.sexo_Corr)">
+      <button
+        *ngFor="let s of sexos"
+        type="button"
+        class="paquete-btn"
+        [class.active]="sexoCorrCtrl?.value === s.sexo_Corr"
+        (click)="onSelectSexo(s.sexo_Corr)">
         {{ s.descripcion }}
       </button>
     </div>
   </div>
 </section>
 
-
-
-
 <section class="ContenTestimonials">
   <div class="testimonials">
     <div class="container">
-      <h2 class="testimonials__title text-center mb-4">
-        Lo que opinan nuestros usuarios
-      </h2>
-      <div class="testimonials__marquee" style=" 
-    height: 250px;
-    padding-top: 50px;
-  ">
+      <h2 class="testimonials__title text-center mb-4">Lo que opinan nuestros usuarios</h2>
+      <div class="testimonials__marquee" style="height: 250px; padding-top: 50px;">
         <div class="testimonials__track">
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
-          <div class="testimonial-item">
-            <p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p>
-            <footer>— pa.uli6937</footer>
-          </div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
         </div>
       </div>
     </div>
   </div>
-
 </section>
+
 <section class="home__about-contact py-5">
   <div class="container">
     <div class="row gy-4">
@@ -168,39 +121,32 @@
         </p>
         <img src="assets/logo_medici_sin_fondo.png" alt="Nuestro equipo" class="img-fluid logo" />
       </div>
+
       <div class="col-md-6">
         <div class="backgroundMedici text-white p-4 h-100 d-flex flex-column justify-content-center">
           <h2 class="section__title mb-4">¡Hablemos!</h2>
-          <p class="text-start mb-4">
-            ¿Tienes preguntas sobre órdenes de examen o telemedicina? Escríbenos y te asistiremos.
-          </p>
+          <p class="text-start mb-4">¿Tienes preguntas sobre órdenes de examen o telemedicina? Escríbenos y te asistiremos.</p>
+
           <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="mx-auto w-100" style="max-width:600px;">
-
             <div class="mb-3 text-start">
-              <label class="form-label">Nombre</label>
-              <input formControlName="nombre" class="form-control"
-                [class.is-invalid]="contactForm.get('nombre')?.touched && contactForm.get('nombre')?.invalid">
-              <div class="invalid-feedback">
-                Nombre es obligatorio.
-              </div>
+              <label class="form-label" for="nombre">Nombre</label>
+              <input id="nombre" formControlName="nombre" class="form-control" autocomplete="name"
+                     [class.is-invalid]="nombre?.touched && nombre?.invalid">
+              <div class="invalid-feedback">Nombre es obligatorio (mín. 2 caracteres).</div>
             </div>
 
             <div class="mb-3 text-start">
-              <label class="form-label">Email</label>
-              <input formControlName="email" class="form-control"
-                [class.is-invalid]="contactForm.get('email')?.touched && contactForm.get('email')?.invalid">
-              <div class="invalid-feedback">
-                Ingresa un email válido.
-              </div>
+              <label class="form-label" for="email">Email</label>
+              <input id="email" formControlName="email" class="form-control" autocomplete="email"
+                     [class.is-invalid]="email?.touched && email?.invalid">
+              <div class="invalid-feedback">Ingresa un email válido.</div>
             </div>
 
             <div class="mb-3 text-start">
-              <label class="form-label">Mensaje</label>
-              <textarea formControlName="mensaje" class="form-control" rows="4"
-                [class.is-invalid]="contactForm.get('mensaje')?.touched && contactForm.get('mensaje')?.invalid"></textarea>
-              <div class="invalid-feedback">
-                Mensaje es obligatorio.
-              </div>
+              <label class="form-label" for="mensaje">Mensaje</label>
+              <textarea id="mensaje" formControlName="mensaje" class="form-control" rows="4"
+                        [class.is-invalid]="mensaje?.touched && mensaje?.invalid"></textarea>
+              <div class="invalid-feedback">Mensaje es obligatorio (mín. 10 caracteres).</div>
             </div>
 
             <div class="text-end">
@@ -209,12 +155,10 @@
               </button>
             </div>
 
-            <!-- ALERTA DE ÉXITO CON EL CÓDIGO DEVUELTO -->
             <div *ngIf="savedId !== null" class="alert alert-success mt-3 text-center">
               ¡Consulta enviada con éxito!<br>
               Tu código de seguimiento es <strong>{{ savedId }}</strong>.
             </div>
-
           </form>
 
         </div>
