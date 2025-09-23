@@ -3,6 +3,7 @@ import { inject, Injectable, OnInit } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Chat } from '../interfaces/chat.interface';
+import { Examen } from '../interfaces/examen.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -54,10 +55,7 @@ export class ChatService {
   }
 
   obtenerDocumento(): Observable<string> {
-    return this.http.get<string>(
-      'https://localhost:7172/api/Pdf/ObtenerDocumento',
-      { responseType: 'text' as 'json' }
-    );
+    return this.http.get<string>('https://localhost:7172/api/Pdf/ObtenerDocumento',{ responseType: 'text' as 'json' });
   }
 
   /*obtenerDocumento(): Observable<string> {
@@ -67,4 +65,15 @@ export class ChatService {
       })
     );
   }*/
+
+
+
+  obtenerExamen(): Observable<Examen[]> {
+    return this.http.get<Examen[]>('https://localhost:7172/api/Examen/obtenerExamen')
+    .pipe(
+      catchError(() => {
+        return of([]);
+      })
+    );
+  }
 }
