@@ -9,8 +9,8 @@ import { Examen } from '../interfaces/examen.interface';
   providedIn: 'root',
 })
 export class ChatService {
+  private apiKey2= '';
   private apiKey = '';
-
   private apiUrl = 'https://api.openai.com/v1/chat/completions';
   private http = inject(HttpClient);
 
@@ -38,7 +38,7 @@ export class ChatService {
     const body = {
       model: 'gpt-4o-mini', // Puedes cambiar esto según necesidad
       messages: [{ role: 'user', content: message }],
-      max_tokens: 150,
+      max_tokens: 500,
     };
 
     return this.http.post(this.apiUrl, body, { headers });

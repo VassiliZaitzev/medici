@@ -1,13 +1,12 @@
 <div class="chat-container">
-  etapa: {{etapa}}
   <div class="messages">
     <div
       *ngFor="let msg of chatRegistrado"
       class="text-end"
       [ngClass]="{'text-end': msg.idTipoMensaje === 0, 'gpt': msg.idTipoMensaje === 1}" [class.user]="msg.idTipoMensaje === 0"
       [class.bot]="msg.idTipoMensaje === 1">
-      {{ msg.mensaje }}
-      <span class="timestamp" style="font-size: xx-small; margin-left: 7px;">{{ this.fechaActual| date:'hh:mm a' }}</span>
+      <span [innerHTML]="msg.mensaje"></span> <!-- Usamos innerHTML aquí -->
+      <span class="timestamp" style="font-size: xx-small; margin-left: 7px;">{{ this.fechaActual | date:'hh:mm a' }}</span>
     </div>
   </div>
 
@@ -15,7 +14,6 @@
     <input type="text" [(ngModel)]="inputText" name="message" placeholder="Escribe un mensaje..." [disabled]="loading"
       autocomplete="off" />
     <button type="submit" [disabled]="loading || !inputText.trim()">Enviar</button>
-
   </form>
 
   <div *ngIf="loading" class="loading">Escribiendo...</div>

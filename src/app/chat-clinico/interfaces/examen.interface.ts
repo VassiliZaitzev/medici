@@ -6,3 +6,10 @@ export interface Examen {
   valor:          number;
   vigencia:       number;
 }
+
+
+
+export interface ExamenRespuesta {
+  nombre:    string;
+  utilidad:  string;
+}

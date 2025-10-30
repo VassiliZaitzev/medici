@@ -4,6 +4,7 @@ import { Chat } from '../../interfaces/chat.interface';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { chatEnv } from '../../../../environments/environment';
 import { Usuario } from '../../interfaces/usuario.interface';
+import { Examen, ExamenRespuesta } from '../../interfaces/examen.interface';
 
 @Component({
   selector: 'app-chat-gpt',
@@ -26,7 +27,9 @@ export class ChatGptComponent implements OnInit {
   public etapa: number = 0;
   public pasoActual: number = 0;  // Paso dentro del flujo de datos personales
   public usuario: Partial<Usuario> = {};
-
+  public mensajeClave:string = "";
+  public examenes : Examen [] = [];
+  public lista:string[] = [];
   ngOnInit() {
     if (!this.savedKey) return;
     this.chatgptService.listarChat(this.savedKey.toString()).subscribe((res) => {
@@ -51,11 +54,10 @@ export class ChatGptComponent implements OnInit {
       console.log('examenes obtenidos', res);
       if( res.length <= 0  || res === null ) return;
 
-      var lista:string[] = [];
-      res.map((ex) => {
-        lista.push(ex.descripcion);
-      });
-      console.log('lista', lista);
+      this.lista = res.map(ex => ex.descripcion);
+      // console.log('lista', lista);
+
+      this.examenes = res;
     })
   }
 
@@ -71,14 +73,14 @@ export class ChatGptComponent implements OnInit {
       idTipoMensaje: 0,
       fecha: this.fechaActual,
     };
-
+    console.log("chat", chat);
     this.chatRegistrado.push(chat);
     this.procesarCola();
   }
 
   private procesarCola() {
     if (this.isProcessing || this.messageQueue.length === 0) return;
-
+    console.log("firstfirstfirst")
     this.isProcessing = true;
     this.loading = true;
 
@@ -91,8 +93,14 @@ export class ChatGptComponent implements OnInit {
       return;
     }
 
+    if(this.etapa === 2) {
+      // Flujo normal después de recopilar datos del usuario
+      console.log("2222222")
+    }
+
     this.chatgptService.sendMessage(chatEnv.condicion + nextMessage!).subscribe({
       next: (res) => {
+        console.log("nextMessage", nextMessage)
         var chat: Chat = {
           idChat: 0,
           codigoCliente: this.savedKey || '',
@@ -118,18 +126,13 @@ export class ChatGptComponent implements OnInit {
           this.etapa = 1;
           this.pasoActual = 0;
           this.chatRegistrado.push(chat);
-          localStorage.setItem(
-            'chatStorage',
-            JSON.stringify(this.chatRegistrado)
-          );
+          localStorage.setItem('chatStorage',JSON.stringify(this.chatRegistrado));
+          this.mensajeClave = nextMessage!;
           return;
         }
 
         this.chatRegistrado.push(chat);
-        localStorage.setItem(
-          'chatStorage',
-          JSON.stringify(this.chatRegistrado)
-        );
+        localStorage.setItem('chatStorage',JSON.stringify(this.chatRegistrado));
       },
       error: (err) => {},
       complete: () => {
@@ -175,10 +178,37 @@ export class ChatGptComponent implements OnInit {
 
       case 3:
         this.usuario.rut = respuesta;
-        chat.mensaje = '✅ Datos recibidos correctamente. ¡Gracias!';
+        chat.mensaje = '✅ Datos recibidos correctamente. ¡Gracias! \n Ahora, procederé a analizar tu solicitud.';
         console.log('Usuario registrado:', this.usuario);
         this.etapa = 2; // vuelves al flujo normal
         this.pasoActual = 0;
+        //hola, me duele la cabeza, necesito un examen medico
+        const jsonEjemplo:ExamenRespuesta[] =  [
+          {
+            "nombre":"",
+            "utilidad": ""
+          }
+        ];
+
+        var messahe: string = `Cual de estos examenes me sirven para esto: "${this.mensajeClave}" \n ${this.lista} si el paciente tiene ${this.usuario.edad} años \n Responde estrictamente en formato JSON con los campos "nombre" y "utilidad". No incluyas marcas de código (sin los símbolos \`\`\`json\`), solo el contenido JSON. Ejemplo: ${JSON.stringify(jsonEjemplo)}`;
+
+        console.log(messahe);
+        this.chatgptService.sendMessage(messahe).subscribe({
+          next: (res) => {
+
+            const rawResponse = res.choices[0].message.content;
+            const cleanedResponse = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+            var examenrepuesta:ExamenRespuesta[] = JSON.parse(cleanedResponse);
+
+            if (examenrepuesta.length === 0) {
+              chat.mensaje = 'No se encontraron exámenes adecuados para tu solicitud.';
+            } else {
+              chat.mensaje = 'Basado en tu solicitud, te recomiendo los siguientes exámenes:\n' +
+              examenrepuesta.map(ex => `● Nombre: ${ex.nombre}\n● Descripción: ${ex.utilidad}`).join('\n\n');
+              chat.mensaje = chat.mensaje.replace(/\n/g, '<br />');
+            }
+          }
+        });
         break;
     }
 
@@ -189,24 +219,21 @@ export class ChatGptComponent implements OnInit {
   obtenerDocumento() {
     this.chatgptService.obtenerDocumento().subscribe({
       next: (res) => {
-        console.log(res);
-        console.log('res');
         const rawBase64 = res;
         const cleaned = rawBase64.replace(/\s/g, '');
-
         const byteCharacters = atob(cleaned);
         const byteNumbers = Array.from(byteCharacters, (c) => c.charCodeAt(0));
         const byteArray = new Uint8Array(byteNumbers);
-
         const blob = new Blob([byteArray], { type: 'application/pdf' });
-        const blobUrl = URL.createObjectURL(blob); // ✅ más confiable que base64 en src
-
-        this.pdfBase64Safe =
-          this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+        const blobUrl = URL.createObjectURL(blob);
+        this.pdfBase64Safe = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
       },
       error: (err) => {
         console.error('Error al obtener el documento:', err);
-      },
+      }
     });
   }
 }
+
+
+
