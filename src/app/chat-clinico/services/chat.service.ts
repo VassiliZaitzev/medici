@@ -10,6 +10,9 @@ import { Examen } from '../interfaces/examen.interface';
 })
 export class ChatService {
   private apiKey2= '';
+  // prueba nicolas
+  // prueba nicolas
+  // prueba nicolas
   private apiKey = '';
   private apiUrl = 'https://api.openai.com/v1/chat/completions';
   private http = inject(HttpClient);
