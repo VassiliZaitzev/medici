@@ -4,15 +4,14 @@ import { catchError, Observable, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Chat } from '../interfaces/chat.interface';
 import { Examen } from '../interfaces/examen.interface';
+import { ExamenFonasa } from '../interfaces/examen.fonasa.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
+
   private apiKey2= '';
-  // prueba nicolas
-  // prueba nicolas
-  // prueba nicolas
   private apiKey = '';
   private apiUrl = 'https://api.openai.com/v1/chat/completions';
   private http = inject(HttpClient);
@@ -41,7 +40,7 @@ export class ChatService {
     const body = {
       model: 'gpt-4o-mini', // Puedes cambiar esto según necesidad
       messages: [{ role: 'user', content: message }],
-      max_tokens: 500,
+      max_tokens: 1000,
     };
 
     return this.http.post(this.apiUrl, body, { headers });
@@ -73,6 +72,16 @@ export class ChatService {
 
   obtenerExamen(): Observable<Examen[]> {
     return this.http.get<Examen[]>('https://localhost:7172/api/Examen/obtenerExamen')
+    .pipe(
+      catchError(() => {
+        return of([]);
+      })
+    );
+  }
+
+
+  obtenerExamenFonasa(): Observable<ExamenFonasa[]> {
+    return this.http.get<ExamenFonasa[]>('https://localhost:7172/api/Examen/obtenerExamenesFonasa')
     .pipe(
       catchError(() => {
         return of([]);

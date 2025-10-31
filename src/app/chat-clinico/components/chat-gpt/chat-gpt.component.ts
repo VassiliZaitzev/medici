@@ -5,6 +5,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { chatEnv } from '../../../../environments/environment';
 import { Usuario } from '../../interfaces/usuario.interface';
 import { Examen, ExamenRespuesta } from '../../interfaces/examen.interface';
+import { ExamenFonasa, ExamenFonasaRespuesta } from '../../interfaces/examen.fonasa.interface';
 
 @Component({
   selector: 'app-chat-gpt',
@@ -28,8 +29,11 @@ export class ChatGptComponent implements OnInit {
   public pasoActual: number = 0;  // Paso dentro del flujo de datos personales
   public usuario: Partial<Usuario> = {};
   public mensajeClave:string = "";
-  public examenes : Examen [] = [];
-  public lista:string[] = [];
+  //public examenes : Examen [] = [];
+  //public lista:string[] = [];
+
+  public examenesFonasa: ExamenFonasa[] = [];
+  public listaFonasa:string[] = [];
   ngOnInit() {
     if (!this.savedKey) return;
     this.chatgptService.listarChat(this.savedKey.toString()).subscribe((res) => {
@@ -50,7 +54,7 @@ export class ChatGptComponent implements OnInit {
     });
 
 
-    this.chatgptService.obtenerExamen().subscribe((res) => {
+    /*this.chatgptService.obtenerExamen().subscribe((res) => {
       console.log('examenes obtenidos', res);
       if( res.length <= 0  || res === null ) return;
 
@@ -58,7 +62,18 @@ export class ChatGptComponent implements OnInit {
       // console.log('lista', lista);
 
       this.examenes = res;
-    })
+    });*/
+
+
+    this.chatgptService.obtenerExamenFonasa().subscribe((res) => {
+      console.log('examenes obtenidos', res);
+      if( res.length <= 0  || res === null ) return;
+
+      this.listaFonasa = res.map(ex => `${ex.codigo} - ${ex.glosa}`);
+      // console.log('lista', lista);
+
+      this.examenesFonasa = res;
+    });
   }
 
   sendMessage() {
@@ -166,17 +181,23 @@ export class ChatGptComponent implements OnInit {
 
       case 1:
         this.usuario.email = respuesta;
-        chat.mensaje = 'Perfecto. ¿Cuál es tu edad?';
+        chat.mensaje = 'Indícame tu género (masculino, femenino, otro)';
         this.pasoActual++;
         break;
 
       case 2:
-        this.usuario.edad = Number(respuesta);
-        chat.mensaje = 'Por último, necesito tu RUT:';
+        this.usuario.genero = respuesta;
+        chat.mensaje = 'Perfecto. ¿Cuál es tu edad?';
         this.pasoActual++;
         break;
 
       case 3:
+        this.usuario.edad = Number(respuesta);
+        chat.mensaje = 'Por último, necesito tu RUT: (Con guion y dígito verificador, ejemplo: 12345678-9)';
+        this.pasoActual++;
+        break;
+
+      case 4:
         this.usuario.rut = respuesta;
         chat.mensaje = '✅ Datos recibidos correctamente. ¡Gracias! \n Ahora, procederé a analizar tu solicitud.';
         console.log('Usuario registrado:', this.usuario);
@@ -190,22 +211,49 @@ export class ChatGptComponent implements OnInit {
           }
         ];
 
-        var messahe: string = `Cual de estos examenes me sirven para esto: "${this.mensajeClave}" \n ${this.lista} si el paciente tiene ${this.usuario.edad} años \n Responde estrictamente en formato JSON con los campos "nombre" y "utilidad". No incluyas marcas de código (sin los símbolos \`\`\`json\`), solo el contenido JSON. Ejemplo: ${JSON.stringify(jsonEjemplo)}`;
+        const formato = [
+          {
+            "tipo": "RADIOGRAFIA",
+            "detalles": [
+              {
+                "nombre":"",
+                "utilidad": ""
+              }
+            ]
+          }
+        ];
 
-        console.log(messahe);
-        this.chatgptService.sendMessage(messahe).subscribe({
+        //var messahe: string = `Cual de estos examenes me sirven para esto: "${this.mensajeClave}" \n ${this.lista} si el paciente tiene ${this.usuario.edad} años \n Responde estrictamente en formato JSON con los campos "nombre" y "utilidad". No incluyas marcas de código (sin los símbolos \`\`\`json\`), solo el contenido JSON. Ejemplo: ${JSON.stringify(jsonEjemplo)}`;
+
+        var messaheFonasa:string = `
+          Eres un asistente que responde **solo en JSON**, sin explicaciones ni texto adicional.
+          Filtra la siguiente lista de examenes para un **paciente ${this.usuario.genero} de ${this.usuario.edad} y necesita saber que examenes son para "${this.mensajeClave}"**.
+           \n Responde estrictamente en formato JSON con los campos "nombre" y "utilidad". No incluyas marcas de código (sin los símbolos \`\`\`json\`), solo el contenido JSON. Ejemplo: ${JSON.stringify(formato)}
+          Formato esperado:
+          ${JSON.stringify(formato)}
+
+          Lista de examenes:
+          ${this.listaFonasa.join('\n')}
+        `;
+        console.log(messaheFonasa);
+        this.chatgptService.sendMessage(messaheFonasa).subscribe({
           next: (res) => {
-
+            console.log("resr res",res);
             const rawResponse = res.choices[0].message.content;
             const cleanedResponse = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-            var examenrepuesta:ExamenRespuesta[] = JSON.parse(cleanedResponse);
+            var examenrepuesta:ExamenFonasaRespuesta[] = JSON.parse(cleanedResponse);
 
             if (examenrepuesta.length === 0) {
               chat.mensaje = 'No se encontraron exámenes adecuados para tu solicitud.';
             } else {
-              chat.mensaje = 'Basado en tu solicitud, te recomiendo los siguientes exámenes:\n' +
-              examenrepuesta.map(ex => `● Nombre: ${ex.nombre}\n● Descripción: ${ex.utilidad}`).join('\n\n');
-              chat.mensaje = chat.mensaje.replace(/\n/g, '<br />');
+              chat.mensaje = 'Basado en tu solicitud, te recomiendo los siguientes exámenes:<br>' +
+              examenrepuesta.map(ex =>
+                `<br><b>${ex.tipo}</b><br>` +
+                ex.detalles.map(det =>
+                  `&nbsp;&nbsp;● Nombre: ${det.nombre}<br>` +
+                  `&nbsp;&nbsp;● Utilidad: ${det.utilidad}<br>`
+                ).join('<br>')
+              ).join('<br><br>');
             }
           }
         });
