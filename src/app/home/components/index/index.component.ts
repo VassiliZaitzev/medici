@@ -24,8 +24,7 @@ this.contactForm = this.fb.group({
   nombre:    ['', [Validators.required, Validators.minLength(2)]],
   email:     ['', [Validators.required, Validators.email]],
   mensaje:   ['', [Validators.required, Validators.minLength(10)]],
-  // ✅ sexo_corr opcional (sin Validators.required)
-  sexo_corr: [null],
+  // sexo_corr: [null],
 });
 
     // (Opcional) depuración:
@@ -35,24 +34,24 @@ this.contactForm = this.fb.group({
   }
 
   ngOnInit(): void {
-    this.homeService.getSexos().subscribe({
-      next: (list) => {
-        this.sexos = list.filter(s => s.vigencia === 1);
-        console.log('Sexos cargados:', this.sexos);
-      },
-      error: (err) => console.error('Error cargando sexos:', err)
-    });
+    // this.homeService.getSexos().subscribe({
+    //   next: (list) => {
+    //     this.sexos = list.filter(s => s.vigencia === 1);
+    //     console.log('Sexos cargados:', this.sexos);
+    //   },
+    //   error: (err) => console.error('Error cargando sexos:', err)
+    // });
   }
 
-  onSelectSexo(sexoCorr: number | null): void {
-    // Si el usuario quiere deseleccionar, puedes pasar null
-    this.contactForm.patchValue({ sexo_corr: sexoCorr });
-    const ctrl = this.contactForm.get('sexo_corr');
-    ctrl?.markAsDirty();
-    ctrl?.markAsTouched();
-    ctrl?.updateValueAndValidity();
-    console.log('Sexo seleccionado:', sexoCorr);
-  }
+  // onSelectSexo(sexoCorr: number | null): void {
+  //   // Si el usuario quiere deseleccionar, puedes pasar null
+  //   this.contactForm.patchValue({ sexo_corr: sexoCorr });
+  //   const ctrl = this.contactForm.get('sexo_corr');
+  //   ctrl?.markAsDirty();
+  //   ctrl?.markAsTouched();
+  //   ctrl?.updateValueAndValidity();
+  //   console.log('Sexo seleccionado:', sexoCorr);
+  // }
 
   onSubmit(): void {
     if (this.contactForm.invalid) {
@@ -83,5 +82,5 @@ this.contactForm = this.fb.group({
   get nombre() { return this.contactForm.get('nombre'); }
   get email() { return this.contactForm.get('email'); }
   get mensaje() { return this.contactForm.get('mensaje'); }
-  get sexoCorrCtrl() { return this.contactForm.get('sexo_corr'); }
+  // get sexoCorrCtrl() { return this.contactForm.get('sexo_corr'); }
 }
