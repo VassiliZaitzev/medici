@@ -1,0 +1,59 @@
+<div class="contact-container mt-5">
+  <div class="contact-card">
+    <h2 class="title">¡Hablemos!</h2>
+    <p class="subtitle">¿Tienes preguntas sobre órdenes de examen o telemedicina? Escríbenos y te asistiremos.</p>
+
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input
+          id="nombre"
+          type="text"
+          formControlName="nombre"
+          placeholder="Tu nombre"
+          [class.invalid]="nombre?.touched && nombre?.invalid"
+        />
+        <div class="error" *ngIf="nombre?.touched && nombre?.invalid">
+          Nombre es obligatorio (mín. 2 caracteres).
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="ejemplo@correo.com"
+          [class.invalid]="email?.touched && email?.invalid"
+        />
+        <div class="error" *ngIf="email?.touched && email?.invalid">
+          Ingresa un email válido.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="mensaje">Mensaje</label>
+        <textarea
+          id="mensaje"
+          rows="4"
+          formControlName="mensaje"
+          placeholder="Escribe tu mensaje..."
+          [class.invalid]="mensaje?.touched && mensaje?.invalid"
+        ></textarea>
+        <div class="error" *ngIf="mensaje?.touched && mensaje?.invalid">
+          Mensaje es obligatorio (mín. 10 caracteres).
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="contactForm.invalid || submitting">
+        {{ submitting ? 'Enviando...' : 'Enviar consulta' }}
+      </button>
+
+      <div *ngIf="savedId !== null" class="success-message">
+        ¡Consulta enviada con éxito!<br />
+        Tu código de seguimiento es <strong>{{ savedId }}</strong>.
+      </div>
+    </form>
+  </div>
+</div>

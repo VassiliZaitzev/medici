@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChatClinicoModule } from './chat-clinico/chat-clinico.module';
 
 const routes: Routes = [
   {
@@ -12,6 +11,16 @@ const routes: Routes = [
     path: 'chat',
     loadChildren: () =>
       import('./chat-clinico/chat-clinico.module').then(m => m.ChatClinicoModule)
+  },
+  {
+    path: 'equipo',
+    loadChildren: () =>
+      import('./equipo/equipo.module').then(m => m.EquipoModule)
+  },
+  {
+    path: 'contacto',
+    loadChildren: () =>
+      import('./contacto/contacto.module').then(m => m.ContactoModule)
   },
   {
     path: '',
