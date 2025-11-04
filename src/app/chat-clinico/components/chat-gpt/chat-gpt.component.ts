@@ -5,7 +5,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { chatEnv } from '../../../../environments/environment';
 import { Usuario } from '../../interfaces/usuario.interface';
 import { Examen, ExamenRespuesta } from '../../interfaces/examen.interface';
-import { ExamenFonasa, ExamenFonasaRespuesta } from '../../interfaces/examen.fonasa.interface';
+import { ExamenFonasa, ExamenFonasaRequest } from '../../interfaces/examen.fonasa.interface';
+import { ChatRequest } from '../../interfaces/chat.request.interface';
 
 @Component({
   selector: 'app-chat-gpt',
@@ -26,18 +27,18 @@ export class ChatGptComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {}
 
   public etapa: number = 0;
-  public pasoActual: number = 0;  // Paso dentro del flujo de datos personales
+  public pasoActual: number = 0;
   public usuario: Partial<Usuario> = {};
   public mensajeClave:string = "";
-  //public examenes : Examen [] = [];
-  //public lista:string[] = [];
 
   public examenesFonasa: ExamenFonasa[] = [];
   public listaFonasa:string[] = [];
+  public impresionVisible: boolean = false;
+  public examenrepuesta: ExamenFonasaRequest[] = [];
+
   ngOnInit() {
     if (!this.savedKey) return;
     this.chatgptService.listarChat(this.savedKey.toString()).subscribe((res) => {
-      console.log('res ', res);
       if (res.length <= 0 || res == null) {
         const mensajeBienvenida: Chat = {
           idChat: 0,
@@ -54,24 +55,9 @@ export class ChatGptComponent implements OnInit {
     });
 
 
-    /*this.chatgptService.obtenerExamen().subscribe((res) => {
-      console.log('examenes obtenidos', res);
-      if( res.length <= 0  || res === null ) return;
-
-      this.lista = res.map(ex => ex.descripcion);
-      // console.log('lista', lista);
-
-      this.examenes = res;
-    });*/
-
-
     this.chatgptService.obtenerExamenFonasa().subscribe((res) => {
-      console.log('examenes obtenidos', res);
       if( res.length <= 0  || res === null ) return;
-
       this.listaFonasa = res.map(ex => `${ex.codigo} - ${ex.glosa}`);
-      // console.log('lista', lista);
-
       this.examenesFonasa = res;
     });
   }
@@ -88,17 +74,16 @@ export class ChatGptComponent implements OnInit {
       idTipoMensaje: 0,
       fecha: this.fechaActual,
     };
-    console.log("chat", chat);
+
     this.chatRegistrado.push(chat);
     this.procesarCola();
   }
 
   private procesarCola() {
     if (this.isProcessing || this.messageQueue.length === 0) return;
-    console.log("firstfirstfirst")
+
     this.isProcessing = true;
     this.loading = true;
-
     const nextMessage = this.messageQueue.shift();
 
     if (this.etapa === 1) {
@@ -108,14 +93,8 @@ export class ChatGptComponent implements OnInit {
       return;
     }
 
-    if(this.etapa === 2) {
-      // Flujo normal después de recopilar datos del usuario
-      console.log("2222222")
-    }
-
     this.chatgptService.sendMessage(chatEnv.condicion + nextMessage!).subscribe({
       next: (res) => {
-        console.log("nextMessage", nextMessage)
         var chat: Chat = {
           idChat: 0,
           codigoCliente: this.savedKey || '',
@@ -123,7 +102,7 @@ export class ChatGptComponent implements OnInit {
           idTipoMensaje: 1,
           fecha: this.fechaActual,
         };
-        console.log(res);
+
         if (res == '') {
           chat.mensaje = 'Ocurrió un error al procesar tu solicitud. Por favor, inténtalo de nuevo más tarde.';
           this.chatRegistrado.push(chat);
@@ -177,57 +156,49 @@ export class ChatGptComponent implements OnInit {
         this.usuario.nombre = respuesta;
         chat.mensaje = 'Genial, ahora necesito tu correo electrónico:';
         this.pasoActual++;
-        break;
+      break;
 
       case 1:
         this.usuario.email = respuesta;
         chat.mensaje = 'Indícame tu género (masculino, femenino, otro)';
         this.pasoActual++;
-        break;
+      break;
 
       case 2:
         this.usuario.genero = respuesta;
         chat.mensaje = 'Perfecto. ¿Cuál es tu edad?';
         this.pasoActual++;
-        break;
+      break;
 
       case 3:
         this.usuario.edad = Number(respuesta);
         chat.mensaje = 'Por último, necesito tu RUT: (Con guion y dígito verificador, ejemplo: 12345678-9)';
         this.pasoActual++;
-        break;
+      break;
 
       case 4:
         this.usuario.rut = respuesta;
+        this.usuario.chatGptKey = this.savedKey || '';
         chat.mensaje = '✅ Datos recibidos correctamente. ¡Gracias! \n Ahora, procederé a analizar tu solicitud.';
-        console.log('Usuario registrado:', this.usuario);
-        this.etapa = 2; // vuelves al flujo normal
+        this.etapa = 2;
         this.pasoActual = 0;
-        //hola, me duele la cabeza, necesito un examen medico
-        const jsonEjemplo:ExamenRespuesta[] =  [
-          {
-            "nombre":"",
-            "utilidad": ""
-          }
-        ];
 
         const formato = [
           {
             "tipo": "RADIOGRAFIA",
             "detalles": [
               {
-                "nombre":"",
+                "codigo": "CODIGO",
+                "nombre": "NOMBRE DEL EXAMEN",
                 "utilidad": ""
               }
             ]
           }
         ];
 
-        //var messahe: string = `Cual de estos examenes me sirven para esto: "${this.mensajeClave}" \n ${this.lista} si el paciente tiene ${this.usuario.edad} años \n Responde estrictamente en formato JSON con los campos "nombre" y "utilidad". No incluyas marcas de código (sin los símbolos \`\`\`json\`), solo el contenido JSON. Ejemplo: ${JSON.stringify(jsonEjemplo)}`;
-
         var messaheFonasa:string = `
           Eres un asistente que responde **solo en JSON**, sin explicaciones ni texto adicional.
-          Filtra la siguiente lista de examenes para un **paciente ${this.usuario.genero} de ${this.usuario.edad} y necesita saber que examenes son para "${this.mensajeClave}"**.
+          Filtra la siguiente lista de examenes para un **paciente ${this.usuario.genero} de ${this.usuario.edad} y necesita saber que examenes son para "${this.mensajeClave}"**. y quiero saber especificamente a menor rasgos, los examenes que necesito.
            \n Responde estrictamente en formato JSON con los campos "nombre" y "utilidad". No incluyas marcas de código (sin los símbolos \`\`\`json\`), solo el contenido JSON. Ejemplo: ${JSON.stringify(formato)}
           Formato esperado:
           ${JSON.stringify(formato)}
@@ -235,29 +206,32 @@ export class ChatGptComponent implements OnInit {
           Lista de examenes:
           ${this.listaFonasa.join('\n')}
         `;
-        console.log(messaheFonasa);
+
         this.chatgptService.sendMessage(messaheFonasa).subscribe({
           next: (res) => {
-            console.log("resr res",res);
             const rawResponse = res.choices[0].message.content;
             const cleanedResponse = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-            var examenrepuesta:ExamenFonasaRespuesta[] = JSON.parse(cleanedResponse);
+            this.examenrepuesta = JSON.parse(cleanedResponse);
 
-            if (examenrepuesta.length === 0) {
+            if (this.examenrepuesta.length === 0) {
               chat.mensaje = 'No se encontraron exámenes adecuados para tu solicitud.';
             } else {
               chat.mensaje = 'Basado en tu solicitud, te recomiendo los siguientes exámenes:<br>' +
-              examenrepuesta.map(ex =>
+              this.examenrepuesta.map(ex =>
                 `<br><b>${ex.tipo}</b><br>` +
                 ex.detalles.map(det =>
-                  `&nbsp;&nbsp;● Nombre: ${det.nombre}<br>` +
+                  `&nbsp;&nbsp;● Nombre: ${det.codigo} - ${det.nombre}<br>` +
                   `&nbsp;&nbsp;● Utilidad: ${det.utilidad}<br>`
                 ).join('<br>')
               ).join('<br><br>');
+
+
+              this.impresionVisible = true;
             }
           }
         });
-        break;
+
+      break;
     }
 
     this.chatRegistrado.push(chat);
@@ -277,9 +251,20 @@ export class ChatGptComponent implements OnInit {
         this.pdfBase64Safe = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
       },
       error: (err) => {
-        console.error('Error al obtener el documento:', err);
+        window.alert('Error al obtener el documento.');
       }
     });
+  }
+
+
+  generarPDF(){
+    const chatRequest:ChatRequest = {
+      usuario: this.usuario,
+      examenFonasa: this.examenrepuesta,
+      chat: this.chatRegistrado
+    };
+
+    console.log(chatRequest)
   }
 }
 

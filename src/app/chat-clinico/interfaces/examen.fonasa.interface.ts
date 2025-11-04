@@ -6,14 +6,13 @@ export interface ExamenFonasa {
   grupo:             number;
 }
 
-
-
-export interface ExamenFonasaRespuesta {
+export interface ExamenFonasaRequest {
   tipo:     string;
   detalles: Detalle[];
 }
 
 export interface Detalle {
+  codigo:   string;
   nombre:   string;
   utilidad: string;
 }

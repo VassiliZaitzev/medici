@@ -7,4 +7,5 @@ export interface Usuario {
   edad: number;
   rut: string;
   genero: string;
+  chatGptKey: string;
 }

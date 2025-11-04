@@ -11,7 +11,6 @@ import { ExamenFonasa } from '../interfaces/examen.fonasa.interface';
 })
 export class ChatService {
 
-  private apiKey2= '';
   private apiKey = '';
   private apiUrl = 'https://api.openai.com/v1/chat/completions';
   private http = inject(HttpClient);
