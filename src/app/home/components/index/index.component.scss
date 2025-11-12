@@ -1,308 +1,454 @@
-/* ========================================
-   1) Globales y utilidades
-   ======================================== */
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  color: #333;
-}
+$primary: #00897B;
+$primary-light: #4DB6AC;
+$bg-light: #f8f9fa;
+$text-dark: #222;
+$white: #fff;
+$font-main: 'Poppins', sans-serif;
 
-.custom-poppins {
-  font-family: 'Poppins', sans-serif !important;
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: inherit;
-}
-
-/* ========================================
-   2) Fondo verde Medici con degradados suaves
-   ======================================== */
-.backgroundMedici {
-  position: relative;
-  background-color: #00897B !important;
-  z-index: 1;
-  color: #fff;
-  padding: 3rem 0;
-  text-align: center;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: -1px; left: 0; right: 0;
-    height: 30px;
-    background: linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 30%);
-    pointer-events: none;
-    z-index: 2;
-  }
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -1px; left: 0; right: 0;
-    height: 30px;
-    background: linear-gradient(to top, #fff 0%, rgba(255,255,255,0) 30%);
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  /* ----------------------------------------
-     2.1) Sección “Elige el examen adecuado para ti”
-  ---------------------------------------- */
-  h2 {
-    margin-bottom: 1rem;
-    font-size: 2rem;
-  }
-  p {
-    margin-bottom: 2rem;
-    font-size: 1.25rem;
-  }
-  .d-flex {
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-}
-
-/* ========================================
-   2.2) Botones de paquetes
-   ======================================== */
-.btnPaquetes {
-  width: 150px;
-  height: 50px;
-  padding: .375rem .75rem;
-  border: none;
-  border-radius: .25rem;
-  color: #fff !important;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: filter .2s;
-
-  &:hover {
-    filter: brightness(0.9);
-  }
-}
-
-/* Azul cuando sexo_corr === 1 */
-.btnPaquetes.hombre {
-  background-color: #0d6efd !important;
-}
-
-/* Rosado cuando sexo_corr === 2 */
-.btnPaquetes.mujer {
-  background-color: #e83e8c !important;
-}
-
-/* ========================================
-   3) “Resultados que marcan la diferencia”
-   ======================================== */
-.doctor-img {
-  max-height: 350px;
-  width: auto;
-  object-fit: cover;
-  border-radius: 50%;
+:host {
   display: block;
-  margin: 0 auto;
+  font-family: $font-main;
+  color: $text-dark;
+  overflow-x: hidden;
 }
 
-.ticks-col {
-  padding-left: 0;
+.doctor-hero {
+  font-family: $font-main;
+  background: linear-gradient(135deg, $primary, $primary-light);
+  color: $white;
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 0 9rem;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
 
-  @media (min-width: 768px) {
-    margin-left: -1rem;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.25rem;
-    li {
-      padding: 0.5rem 0;
-    }
-  }
-  p {
-    font-size: 1.25rem;
-    margin: 0;
-  }
-}
-
-/* ========================================
-   4) Carrusel de testimonios (infinito + fade)
-   ======================================== */
-.testimonials {
-  padding: 3rem 0;
-  background: #fff;
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-
-  &__title {
-    color: #00897B;
-    font-weight: 500;
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  &__marquee {
-    width: 100%;
-    overflow-x: hidden;
+  .hero-inner {
+    z-index: 2;
     position: relative;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    &::before, &::after {
-      content: "";
-      position: absolute;
-      top: 0; height: 100%; width: 5rem;
-      pointer-events: none;
-      z-index: 2;
-    }
-    &::before {
-      left: 0;
-      background: linear-gradient(to right, #fff 0%, rgba(255,255,255,0) 100%);
-    }
-    &::after {
-      right: 0;
-      background: linear-gradient(to left, #fff 0%, rgba(255,255,255,0) 100%);
-    }
   }
-  &__track {
-    display: flex;
-    gap: 1rem;
-    padding: 0;
-    width: max-content;
-    animation: scroll-left 20s linear infinite;
-    &:hover {
-      animation-play-state: paused;
-    }
-  }
-}
 
-@keyframes scroll-left {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.testimonial-item {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: .5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 240px;
-  flex-shrink: 0;
-  transition: transform .3s, box-shadow .3s;
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  .hero-text {
+    max-width: 560px;
     z-index: 3;
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 2.9rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    p.lead {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.95);
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      font-weight: 600;
+      border-radius: 0.6rem;
+      transition: all 0.28s ease;
+
+      &.btn-primary {
+        background-color: $white;
+        color: $primary;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+
+        &:hover {
+          background-color: $primary-light;
+          color: $white;
+          transform: translateY(-3px);
+        }
+      }
+
+      &.btn-outline-primary {
+        border: 2px solid $white;
+        color: $white;
+        background: transparent;
+
+        &:hover {
+          background: $white;
+          color: $primary;
+          transform: translateY(-3px);
+        }
+      }
+    }
   }
-  p {
-    margin-bottom: .75rem;
-    font-style: italic;
+
+  .hero-image {
+    position: relative;
+    z-index: 3;
+    max-width: 480px;
+    width: 48%;
+
+    .hero-doctor-img {
+      width: 100%;
+      border-radius: 1rem;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
+      transition: transform 0.6s cubic-bezier(.19, 1, .22, 1), box-shadow 0.4s ease;
+      animation: float 5s ease-in-out infinite;
+      display: block;
+      margin: 0 auto;
+      object-fit: cover;
+    }
+
+    .doctor-badge {
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: $white;
+      color: $primary;
+      padding: 0.55rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      font-size: 0.9rem;
+    }
   }
-  footer {
-    font-size: .9rem;
-    text-align: right;
-    color: #555;
+
+  .wave-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 150px;
+    z-index: 1;
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-fade-up {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .animate-fade-up-delay {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 0.7s ease 0.15s forwards;
+  }
+
+  .animate-fade-up-delay2 {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: fadeUp 0.7s ease 0.3s forwards;
+  }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
-/* ========================================
-   5) Pasos
-   ======================================== */
-.section__title {
-  color: #00897B;
-  font-weight: 500;
-  font-size: 2rem;
-  text-align: center;
-  margin-bottom: 1.5rem;
+@media (max-width: 991.98px) {
+  .doctor-hero {
+    padding-bottom: 6rem;
+
+    .hero-image {
+      width: 80%;
+      margin-top: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 575.98px) {
+  .doctor-hero {
+    padding: 4rem 0 6rem;
+
+    .hero-text {
+      padding: 0 1.25rem;
+    }
+
+    .hero-image {
+      width: 100%;
+    }
+
+    .doctor-badge {
+      bottom: -16px;
+    }
+  }
+}
+
+.resultados {
+  padding: 4.5rem 0;
+  background-color: $bg-light;
+
+  .section__title {
+    font-weight: 700;
+    color: $primary;
+    font-size: 1.9rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .doctor-img {
+    border-radius: 50%;
+    max-width: 220px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .ticks li {
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: $text-dark;
+
+    i {
+      color: $primary;
+      font-size: 1.25rem;
+    }
+  }
 }
 
 .home__steps {
-  padding: 3rem 0;
+  padding: 4.5rem 0;
+  background: white;
+
+  .section__title {
+    color: $primary;
+    font-weight: 700;
+    font-size: 1.85rem;
+    margin-bottom: 2.5rem;
+  }
+
   .step-card {
-    background: rgba(0,137,123,0.6);
-    color: #fff;
-    padding: 1.5rem;
-    border-radius: .5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    transition: transform .3s, box-shadow .3s;
-    margin-bottom: 1rem;
-    height: 100%;
+    background: #f0fdfd;
+    border-radius: 1rem;
+    padding: 1.8rem;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.09);
+    }
+
+    .step-icon {
+      font-size: 2rem;
+      color: $primary;
+      margin-bottom: 0.6rem;
+    }
+
     h3 {
-      margin-bottom: .75rem;
-      font-size: 1.25rem;
+      color: $primary;
       font-weight: 600;
     }
-    p { margin: 0; }
-    img.step-img {
-      width: 200px;
-      margin: .5rem 0 0;
-    }
+  }
+}
+
+.testimonials {
+  background-color: #f8f9fa;
+  position: relative;
+  overflow: hidden;
+
+  .section__title {
+    font-weight: 700;
+    color: #00897B;
+  }
+
+  .testimonials__marquee {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  .testimonials__track {
+    display: flex;
+    width: max-content;
+    animation: scroll-marquee 35s linear infinite;
+  }
+
+  .testimonial-item {
+    background: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem 2rem;
+    margin-right: 1.5rem;
+    flex: 0 0 auto;
+    width: 280px;
+    color: #333;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transform: translateY(-6px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     }
-  }
-}
 
-/* ========================================
-   6) “Quiénes somos” + Contacto
-   ======================================== */
-.home__about-contact {
-  padding: 3rem 0;
-  .about__content {
-    .about__text {
-      @extend .custom-poppins;
-      margin-bottom: 1rem;
-    }
-    .logo {
-      display: block;
-      max-width: 200px;
-      margin: 1.5rem auto 0;
-    }
-  }
-  .backgroundMedici {
-    border-radius: .5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    &::before, &::after {
-      display: none;
-    }
-    .section__title {
-      color: #fff;
-    }
     p {
-      color: #f0f0f0;
+      font-size: 1rem;
+      font-style: italic;
+      color: #555;
     }
-    .form-label {
-      color: #fff;
-    }
-    .btn-light {
+
+    footer {
+      margin-top: 0.8rem;
+      font-weight: 600;
       color: #00897B;
-      font-weight: 500;
+      font-size: 0.95rem;
+    }
+  }
+
+  @keyframes scroll-marquee {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(-50%);
     }
   }
 }
-.paquete-btn {
-  display: inline-block;
-  width: 150px;
-  height: 50px;
-  line-height: 50px;
-  text-align: center;
-  border: 1px solid transparent;
-  border-radius: .25rem;
-  color: #fff;
-  cursor: pointer;
-  background-color: #0d6efd; 
-  /* transiciones para brillo y tamaño */
-  transition: filter .2s, transform .2s;
 
-  &:hover {
-    filter: brightness(0.9);
-    transform: scale(1.05); /* ajusta el valor al que te guste */
+.home__about-contact {
+  padding: 4.5rem 0;
+  background: white;
+
+  .section__title {
+    color: $primary;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+  }
+
+  .about__text {
+    color: #444;
+    line-height: 1.6;
+  }
+
+  .logo {
+    max-width: 160px;
+    margin-top: 1rem;
+  }
+
+  .contact-card {
+    background: $primary;
+    color: $white;
+    padding: 2rem;
+    border-radius: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0, 128, 115, 0.08);
+
+    .form-label {
+      color: $white;
+      font-weight: 600;
+    }
+
+    .form-control {
+      border-radius: 0.6rem;
+      border: none;
+      padding: .7rem .9rem;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(77, 182, 172, 0.18);
+      }
+
+      &.is-invalid {
+        border: 2px solid rgba(255, 100, 100, 0.9);
+      }
+    }
+
+    .btn-light {
+      color: $primary;
+      font-weight: 700;
+      border-radius: 0.6rem;
+      transition: all 0.25s;
+
+      &:hover {
+        background: $white;
+        color: $primary;
+        transform: translateY(-3px);
+      }
+    }
+
+    .alert-success {
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+    }
+  }
+}
+
+.final-cta {
+  background: linear-gradient(135deg, #009688, #4DB6AC);
+  color: #fff;
+
+  h3 {
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .btn {
+    font-weight: 600;
+    padding: 0.8rem 2rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    background-color: #fff;
+    color: #009688;
+    border: 2px solid transparent;
+
+    &:hover {
+      background-color: #00796B;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+  }
+
+  .btn-outline-primary {
+    background-color: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+
+    &:hover {
+      background-color: #fff;
+      color: #009688;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .doctor-hero {
+    padding: 3.5rem 0 7rem;
+  }
+
+  .resultados {
+    padding: 3rem 0;
+  }
+
+  .home__steps {
+    padding: 3rem 0;
+  }
+
+  .home__about-contact {
+    padding: 2.5rem 0;
   }
 }

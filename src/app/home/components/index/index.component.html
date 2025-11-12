@@ -1,151 +1,190 @@
-<section class="backgroundMedici text-white text-center py-5 mt-5">
-  <div class="container">
-    <h1 class="display-4">Tus órdenes médicas, a un clic</h1>
-    <p class="lead">
-      Accede a exámenes preventivos y telemedicina rápida, económica y 100 % online.
-    </p>
-    <a [routerLink]="['/registro']" class="btn btn-light btn-lg me-2">Crear cuenta</a>
-    <a [routerLink]="['/login']" class="btn btn-outline-light btn-lg">Ingresar</a>
+
+<section class="doctor-hero position-relative overflow-hidden">
+  <div class="container hero-inner d-flex flex-column flex-lg-row align-items-center justify-content-between py-5">
+    <div class="hero-text text-center text-lg-start mb-5 mb-lg-0">
+      <h1 class="display-4 fw-bold mb-3 animate-fade-up">
+        Solicita tus exámenes médicos con confianza
+      </h1>
+      <p class="lead mb-4 animate-fade-up-delay">
+        Rápido, seguro y conectado con laboratorios certificados.<br>
+        Tu salud en manos de profesionales.
+      </p>
+      <div
+        class="d-flex flex-column flex-sm-row justify-content-center justify-content-lg-start gap-3 animate-fade-up-delay2">
+        <a routerLink="/registro" class="btn btn-primary btn-lg px-4">
+          Crear cuenta
+        </a>
+        <a routerLink="/login" class="btn btn-outline-primary btn-lg px-4">
+          Ingresar
+        </a>
+      </div>
+    </div>
+    <div class="hero-image text-center position-relative">
+      <img src="assets/doctor-hero.png" alt="Doctor profesional" class="img-fluid hero-doctor-img">
+      <div class="doctor-badge shadow-sm">
+        <i class="bi bi-heart-pulse text-danger me-2"></i>
+        Atención médica certificada
+      </div>
+    </div>
+
+  </div>
+  <div class="wave-container position-absolute bottom-0 start-0 w-100">
+    <svg viewBox="0 0 1440 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path fill="#f8f9fa">
+        <animate attributeName="d" dur="8s" repeatCount="indefinite" values="
+            M0,64L60,74.7C120,85,240,107,360,106.7C480,107,600,85,720,69.3C840,53,960,43,1080,53.3C1200,64,1320,96,1380,112L1440,128L1440,150L0,150Z;
+            M0,80L60,90.7C120,101,240,123,360,122.7C480,123,600,101,720,85.3C840,69,960,59,1080,69.3C1200,80,1320,112,1380,128L1440,144L1440,150L0,150Z;
+            M0,64L60,74.7C120,85,240,107,360,106.7C480,107,600,85,720,69.3C840,53,960,43,1080,53.3C1200,64,1320,96,1380,112L1440,128L1440,150L0,150Z
+          " />
+      </path>
+    </svg>
   </div>
 </section>
-
-<section class="py-5">
+<section class="resultados py-5">
   <div class="container">
-    <h2 class="testimonials__title text-center fs-2 mb-5">Resultados que marcan la diferencia</h2>
+    <h2 class="section__title text-center mb-5">Resultados que marcan la diferencia</h2>
 
-    <div class="row justify-content-center align-items-center gx-0">
-      <div class="col-md-4 text-center mb-4 mb-md-0">
-        <img src="assets/doctor.png" class="doctor-img rounded-circle img-fluid mx-auto d-block" alt="Dr. Ramón Kong">
-        <p class="mt-3 mb-0">
-          <strong>Dr. Ramón Kong</strong><br>
-          Médico urgenciólogo, U. de Chile
-        </p>
+    <div class="row align-items-center gy-4">
+      <div class="col-md-4 text-center">
+        <img src="assets/doctor.png" class="doctor-img shadow-sm mb-3" alt="Dr. Ramón Kong">
+        <p class="mb-0"><strong>Dr. Ramón Kong</strong><br>Médico urgenciólogo, U. de Chile</p>
       </div>
 
-      <div class="col-md-5 ps-md-0 ticks-col">
-        <ul>
-          <li>✔ Atención 24/7</li>
-          <li>✔ Cobertura nacional</li>
-          <li>✔ +10 000 visitas anuales</li>
+      <div class="col-md-8">
+        <ul class="ticks list-unstyled mb-3">
+          <li class="mb-2"><i class="bi bi-check-circle-fill me-2"></i> Atención 24/7</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill me-2"></i> Cobertura nacional</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill me-2"></i> +10 000 visitas anuales</li>
         </ul>
         <p>Accede a órdenes médicas rápidas y asequibles, y lleva tu salud en una bitácora personal.</p>
       </div>
     </div>
   </div>
 </section>
-
 <section class="home__steps py-5">
-  <div class="container home__container">
-    <h2 class="section__title text-center mb-5">Tu salud en 3 simples pasos</h2>
-    <div class="row text-center">
-      <div class="col-md-4">
-        <div class="step-card">
-          <h3>01. Crea tu cuenta</h3>
-          <p>Perfil listo en 2 minutos. Fácil y seguro.</p>
-          <br>
-          <img src="assets/crea_tu_cuenta.png" alt="Crea tu cuenta" class="step-img mb-2">
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="step-card">
-          <h3>02. Selecciona lo que necesitas</h3>
-          <p>Elige órdenes o telemedicina según tus necesidades.</p>
-          <img src="assets/selecciona_el_control.png" alt="Selecciona el control" class="step-img mb-2">
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="step-card">
-          <h3>03. Controla tu salud</h3>
-          <p>Consulta tu historial de órdenes y citas en tu bitácora.</p>
-          <img src="assets/controla_tu_salud.png" alt="Controla tu salud" class="step-img mb-2">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Sexo es opcional: los botones ya NO muestran error ni bloquean el submit -->
-<!-- <section class="backgroundMedici text-white py-5 text-center">
   <div class="container">
-    <h2>Elige el examen adecuado para ti</h2>
-    <p>Ofrecemos paquetes a medida según tus necesidades para:</p>
+    <h2 class="section__title text-center mb-5">Tu salud en 3 simples pasos</h2>
 
-    <div class="d-flex justify-content-center gap-3 mb-4">
-      <button
-        *ngFor="let s of sexos"
-        type="button"
-        class="paquete-btn"
-        [class.active]="sexoCorrCtrl?.value === s.sexo_Corr"
-        (click)="onSelectSexo(s.sexo_Corr)">
-        {{ s.descripcion }}
-      </button>
-    </div>
-  </div>
-</section> -->
+    <div class="row text-center g-4">
+      <div class="col-md-4">
+        <div class="step-card p-4 h-100">
+          <div class="step-icon mb-3"><i class="bi bi-person-plus"></i></div>
+          <h3 class="h5">01. Crea tu cuenta</h3>
+          <p class="mb-0">Perfil listo en 2 minutos. Fácil y seguro.</p>
+        </div>
+      </div>
 
-<section class="ContenTestimonials">
-  <div class="testimonials">
-    <div class="container">
-      <h2 class="testimonials__title text-center mb-4">Lo que opinan nuestros usuarios</h2>
-      <div class="testimonials__marquee" style="height: 250px; padding-top: 50px;">
-        <div class="testimonials__track">
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
-          <div class="testimonial-item"><p>“En doctor911 encontrarás exámenes para la diabetes y mucho más. ¡Es completísima!”</p><footer>— pa.uli6937</footer></div>
+      <div class="col-md-4">
+        <div class="step-card p-4 h-100">
+          <div class="step-icon mb-3"><i class="bi bi-clipboard-check"></i></div>
+          <h3 class="h5">02. Selecciona lo que necesitas</h3>
+          <p class="mb-0">Elige órdenes o telemedicina según tus necesidades.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="step-card p-4 h-100">
+          <div class="step-icon mb-3"><i class="bi bi-heart-pulse"></i></div>
+          <h3 class="h5">03. Controla tu salud</h3>
+          <p class="mb-0">Consulta tu historial de órdenes y citas en tu bitácora.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
+<section class="testimonials py-5">
+  <div class="container">
+    <h2 class="section__title text-center mb-5">Lo que opinan nuestros usuarios</h2>
 
+    <div class="testimonials__marquee">
+      <div class="testimonials__track">
+        <!-- Bloque 1 -->
+        <div class="testimonial-item">
+          <p>“Excelente servicio, rápido y confiable.”</p>
+          <footer>— cami_med</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“Pude hacer mis exámenes desde casa, genial.”</p>
+          <footer>— pabloh93</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“La atención y los precios son top.”</p>
+          <footer>— alejandrag</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“Servicio muy práctico y profesional.”</p>
+          <footer>— marianal</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“Resultados claros y rápidos.”</p>
+          <footer>— juancho</footer>
+        </div>
+
+        <!-- Bloque 2 (duplicado para loop continuo) -->
+        <div class="testimonial-item">
+          <p>“Excelente servicio, rápido y confiable.”</p>
+          <footer>— cami_med</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“Pude hacer mis exámenes desde casa, genial.”</p>
+          <footer>— pabloh93</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“La atención y los precios son top.”</p>
+          <footer>— alejandrag</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“Servicio muy práctico y profesional.”</p>
+          <footer>— marianal</footer>
+        </div>
+        <div class="testimonial-item">
+          <p>“Resultados claros y rápidos.”</p>
+          <footer>— juancho</footer>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <section class="home__about-contact py-5">
   <div class="container">
-    <div class="row gy-4">
-      <div class="col-md-6 about__content">
-        <h2 class="section__title text-center mb-4 pt-4">¿Quiénes somos?</h2>
+    <div class="row gy-4 align-items-center">
+      <div class="col-md-6">
+        <h2 class="section__title mb-4 text-center text-md-start">¿Quiénes somos?</h2>
         <p class="about__text">
-          Somos Medici, un equipo de profesionales dedicado a desarrollar soluciones
+          Somos <strong>Medici</strong>, un equipo de profesionales dedicado a desarrollar soluciones
           innovadoras que acercan la medicina preventiva a toda la población,
           reduciendo brechas geográficas, económicas y sociales.
         </p>
         <p class="about__text">
-          Liderados por el jj, médico cirujano con especialización
-          en urgencias y trayectoria en Cemines y Universidad de Chile.
+          Liderados por el equipo médico con experiencia en centros clínicos y universidades líderes del país.
         </p>
-        <img src="assets/logo_medici_sin_fondo.png" alt="Nuestro equipo" class="img-fluid logo" />
+        <img src="assets/logo_medici_sin_fondo.png" alt="Nuestro equipo" class="img-fluid logo mt-3" />
       </div>
-
       <div class="col-md-6">
-        <div class="backgroundMedici text-white p-4 h-100 d-flex flex-column justify-content-center">
-          <h2 class="section__title mb-4">¡Hablemos!</h2>
-          <p class="text-start mb-4">¿Tienes preguntas sobre órdenes de examen o telemedicina? Escríbenos y te asistiremos.</p>
+        <div class="contact-card p-4">
+          <h3 class="text-white mb-3">¡Hablemos!</h3>
+          <p class="text-white-50 mb-4">¿Tienes preguntas sobre órdenes de examen o telemedicina? Escríbenos y te
+            asistiremos.</p>
 
           <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="mx-auto w-100" style="max-width:600px;">
-            <div class="mb-3 text-start">
-              <label class="form-label" for="nombre">Nombre</label>
+            <div class="mb-3">
+              <label for="nombre" class="form-label text-white">Nombre</label>
               <input id="nombre" formControlName="nombre" class="form-control" autocomplete="name"
-                     [class.is-invalid]="nombre?.touched && nombre?.invalid">
+                [class.is-invalid]="nombre?.touched && nombre?.invalid">
               <div class="invalid-feedback">Nombre es obligatorio (mín. 2 caracteres).</div>
             </div>
 
-            <div class="mb-3 text-start">
-              <label class="form-label" for="email">Email</label>
+            <div class="mb-3">
+              <label for="email" class="form-label text-white">Email</label>
               <input id="email" formControlName="email" class="form-control" autocomplete="email"
-                     [class.is-invalid]="email?.touched && email?.invalid">
+                [class.is-invalid]="email?.touched && email?.invalid">
               <div class="invalid-feedback">Ingresa un email válido.</div>
             </div>
 
-            <div class="mb-3 text-start">
-              <label class="form-label" for="mensaje">Mensaje</label>
+            <div class="mb-3">
+              <label for="mensaje" class="form-label text-white">Mensaje</label>
               <textarea id="mensaje" formControlName="mensaje" class="form-control" rows="4"
-                        [class.is-invalid]="mensaje?.touched && mensaje?.invalid"></textarea>
+                [class.is-invalid]="mensaje?.touched && mensaje?.invalid"></textarea>
               <div class="invalid-feedback">Mensaje es obligatorio (mín. 10 caracteres).</div>
             </div>
 
@@ -160,9 +199,19 @@
               Tu código de seguimiento es <strong>{{ savedId }}</strong>.
             </div>
           </form>
-
         </div>
       </div>
+
+    </div>
+  </div>
+</section>
+<section class="final-cta py-5 text-center">
+  <div class="container">
+    <h3 class="mb-3">Listo para cuidar tu salud?</h3>
+    <p class="mb-4">Crea tu cuenta y solicita tu primer examen en minutos.</p>
+    <div class="d-flex justify-content-center gap-3">
+      <a routerLink="/registro" class="btn btn-primary btn-lg">Crear cuenta</a>
+      <a routerLink="/servicios" class="btn btn-outline-primary btn-lg">Ver servicios</a>
     </div>
   </div>
 </section>

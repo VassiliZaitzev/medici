@@ -1,93 +1,213 @@
-/* Estilos completos del chat para copiar y pegar */
+$color-primary: #009688;
+$color-secondary: #4DB6AC;
+$color-bg: #E0F2F1;
+$color-light: #F8FFFE;
+$color-dark: #00332D;
+$font-main: 'Inter', 'Poppins', sans-serif;
+
+.chat-wrapper {
+  background: linear-gradient(180deg, #f4fffd 0%, #e0f2f1 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: $font-main;
+  padding: 2rem;
+}
 
 .chat-container {
-  max-width: 800px;
-  margin: 20px auto;
+  width: 100%;
+  max-width: 820px;
+  height: 80vh;
   background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  padding: 10px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.6s ease;
 }
 
 .messages {
   flex: 1;
   overflow-y: auto;
-  margin-bottom: 10px;
-  padding-right: 4px;
-
-  /* Nuevo: convertimos en flex-col para que funcione align-self */
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 1rem;
+  padding: 0.5rem 0.5rem 1.5rem;
+  scroll-behavior: smooth;
 }
 
-.messages div {
-  display: inline-block;      /* ancho según contenido */
-  padding: 8px 12px;
-  border-radius: 16px;
-  word-wrap: break-word;
-  max-width: 70%;             /* no crece demasiado */
-}
+.message-bubble {
+  display: inline-block;
+  padding: 0.9rem 1.3rem;
+  border-radius: 1.25rem;
+  max-width: 75%;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  animation: messagePop 0.3s ease forwards;
 
-.user {
-  background-color: #00897B;   /* mint oscuro */
-  color: #ffffff;
-  align-self: flex-end;        /* burbuja a la derecha */
-}
-
-.bot {
-  background-color: #E0F7F5;   /* mint clarito */
-  color: #004D45;              /* variante oscura */
-  align-self: flex-start;      /* burbuja a la izquierda */
-}
-
-.input-form {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-input[type="text"] {
-  flex: 1;
-  padding: 8px 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  background: #f8f8f8;
-  outline: none;
-  transition: border-color 0.2s ease;
-
-  &:focus {
-    border-color: #00897B;
-  }
-}
-
-button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  background: #00897B;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-
-  &:hover:not(:disabled) {
-    background: #006F65;
+  &.user {
+    background: linear-gradient(135deg, $color-primary, $color-secondary);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 0.3rem;
+    box-shadow: 0 3px 12px rgba(0, 150, 136, 0.25);
   }
 
-  &:disabled {
-    background: #ccc;
-    cursor: not-allowed;
+  &.bot {
+    background: #E8F8F6;
+    color: $color-dark;
+    align-self: flex-start;
+    border-bottom-left-radius: 0.3rem;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .timestamp {
+    display: block;
+    text-align: right;
+    font-size: 0.7rem;
+    color: rgba(0, 0, 0, 0.45);
+    margin-top: 4px;
   }
 }
 
 .loading {
-  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   color: #666;
-  text-align: center;
-  margin-top: 8px;
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    background: $color-primary;
+    border-radius: 50%;
+    animation: blink 1.4s infinite both;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+
+  .loading-text {
+    margin-left: 6px;
+    color: $color-primary;
+    font-weight: 500;
+  }
+}
+
+.input-form.modern {
+  background: #fafafa;
+  border-radius: 1.5rem;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e0e0e0;
+  transition: box-shadow 0.3s ease;
+
+  &:focus-within {
+    box-shadow: 0 6px 20px rgba(0, 150, 136, 0.15);
+    border-color: $color-primary;
+  }
+
+  input[type='text'] {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    padding: 0.6rem 0.4rem;
+    outline: none;
+    color: #333;
+  }
+
+  button {
+    border: none;
+    background: $color-primary;
+    color: #fff;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    i {
+      font-size: 1.2rem;
+    }
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 6%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 150, 136, 0.25);
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes messagePop {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    height: 75vh;
+    padding: 1rem;
+  }
+
+  .input-form.modern button {
+    width: 38px;
+    height: 38px;
+  }
 }

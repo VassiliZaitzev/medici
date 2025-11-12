@@ -1,7 +1,10 @@
-<div class="contact-container mt-5">
+<section class="contact-section">
   <div class="contact-card">
     <h2 class="title">¡Hablemos!</h2>
-    <p class="subtitle">¿Tienes preguntas sobre órdenes de examen o telemedicina? Escríbenos y te asistiremos.</p>
+    <p class="subtitle">
+      ¿Tienes preguntas sobre órdenes de examen o telemedicina?<br />
+      Escríbenos y te asistiremos.
+    </p>
 
     <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
@@ -51,9 +54,10 @@
       </button>
 
       <div *ngIf="savedId !== null" class="success-message">
-        ¡Consulta enviada con éxito!<br />
+        <i class="bi bi-check-circle-fill"></i>
+        <span>¡Consulta enviada con éxito!</span><br />
         Tu código de seguimiento es <strong>{{ savedId }}</strong>.
       </div>
     </form>
   </div>
-</div>
+</section>
