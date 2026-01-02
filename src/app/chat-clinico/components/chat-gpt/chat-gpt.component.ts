@@ -7,6 +7,7 @@ import { Usuario } from '../../interfaces/usuario.interface';
 import { Examen, ExamenRespuesta } from '../../interfaces/examen.interface';
 import { ExamenFonasa, ExamenFonasaRequest } from '../../interfaces/examen.fonasa.interface';
 import { ChatRequest } from '../../interfaces/chat.request.interface';
+import { PagoService } from '../../services/pago.service';
 
 @Component({
   selector: 'app-chat-gpt',
@@ -20,6 +21,7 @@ export class ChatGptComponent implements OnInit {
   private messageQueue: string[] = [];
   private isProcessing = false;
   public chatgptService = inject(ChatService);
+  public pagoService = inject(PagoService);
   public fase: number = 0;
   public chatRegistrado: Chat[] = [];
   private savedKey = localStorage.getItem('chatgpt_key');
@@ -265,6 +267,12 @@ export class ChatGptComponent implements OnInit {
     };
 
     console.log(chatRequest)
+  }
+
+  pagar() {
+    this.pagoService.crearPago().subscribe(resp => {
+      window.location.href = resp.url;
+    });
   }
 }
 
