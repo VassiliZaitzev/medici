@@ -10,13 +10,8 @@ import { ExamenFonasa } from '../interfaces/examen.fonasa.interface';
   providedIn: 'root',
 })
 export class ChatService {
-
-  private apiKey = '';
-  private apiUrl = 'https://api.openai.com/v1/chat/completions';
   private http = inject(HttpClient);
-
   public readonly chatKey: string;
-
   public urlBase: string = 'https://localhost:7172/api';
 
   constructor() {
@@ -31,18 +26,11 @@ export class ChatService {
   }
 
   sendMessage(message: string): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.apiKey}`,
-    });
-
-    const body = {
-      model: 'gpt-4o-mini', // Puedes cambiar esto según necesidad
-      messages: [{ role: 'user', content: message }],
-      max_tokens: 1000,
-    };
-
-    return this.http.post(this.apiUrl, body, { headers });
+    return this.http.get<any>(`https://localhost:7172/api/Chat/GptEnviarMensaje/${message}`).pipe(
+      catchError(() => {
+        return of(null);
+      })
+    );
   }
 
   listarChat(codigo: string): Observable<Chat[]> {
@@ -59,16 +47,6 @@ export class ChatService {
     return this.http.get<string>('https://localhost:7172/api/Pdf/ObtenerDocumento',{ responseType: 'text' as 'json' });
   }
 
-  /*obtenerDocumento(): Observable<string> {
-    return this.http.get<string>(`${this.urlBase}/Pdf/ObtenerDocumento`).pipe(
-      catchError(() => {
-        return of('');
-      })
-    );
-  }*/
-
-
-
   obtenerExamen(): Observable<Examen[]> {
     return this.http.get<Examen[]>('https://localhost:7172/api/Examen/obtenerExamen')
     .pipe(
@@ -77,7 +55,6 @@ export class ChatService {
       })
     );
   }
-
 
   obtenerExamenFonasa(): Observable<ExamenFonasa[]> {
     return this.http.get<ExamenFonasa[]>('https://localhost:7172/api/Examen/obtenerExamenesFonasa')

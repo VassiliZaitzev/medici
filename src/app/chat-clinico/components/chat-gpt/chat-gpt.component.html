@@ -24,5 +24,12 @@
         </svg>
       </button>
     </form>
+
+
+    <div *ngIf="impresionVisible" class="impresion-seccion">
+      <h3>Impresión Diagnóstica</h3>
+      <button (click)="generarPDF()" class="btn btn-secondary mb-3">Generar PDF</button>
+    </div>
+
   </div>
 </section>
