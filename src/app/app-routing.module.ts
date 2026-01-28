@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { SuccessComponent } from './pagos/success/success.component';
+import { FailureComponent } from './pagos/failure/failure.component';
 
 const routes: Routes = [
   {
@@ -22,6 +24,8 @@ const routes: Routes = [
     loadChildren: () =>
       import('./contacto/contacto.module').then(m => m.ContactoModule)
   },
+  { path: 'pagos/success', component: SuccessComponent },
+  { path: 'pagos/failure', component: FailureComponent },
   {
     path: '',
     redirectTo: 'home',

@@ -1,0 +1,10 @@
+<div class="container text-center mt-5">
+  <div class="card p-5 shadow-sm">
+    <h2 class="text-success">¡Pago Realizado con Éxito!</h2>
+    <p class="lead">Gracias por preferir Medici.</p>
+    <div class="alert alert-info" *ngIf="paymentId">
+      Tu número de comprobante es: <strong>{{ paymentId }}</strong>
+    </div>
+    <button class="btn btn-primary mt-3" routerLink="/home">Volver al Inicio</button>
+  </div>
+</div>

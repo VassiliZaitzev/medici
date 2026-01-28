@@ -68,6 +68,13 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "host": "0.0.0.0",
+            "disableHostCheck": true,
+            "allowedHosts": [
+              "fungous-cosmonautically-rheba.ngrok-free.dev"
+            ]
+          },
           "configurations": {
             "production": {
               "buildTarget": "medici:build:production"
