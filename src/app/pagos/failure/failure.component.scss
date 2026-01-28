@@ -1,0 +1,103 @@
+// VARIABLES
+$medici-red: #e74c3c;       // Rojo Error
+$medici-red-dark: #c0392b;  // Rojo Oscuro (Hover)
+$medici-bg: #fdf2f2;        // Fondo rojizo muy suave
+$text-dark: #2c3e50;
+$white: #ffffff;
+
+// CONTENEDOR PRINCIPAL
+.container-failure {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  // Fondo degradado suave hacia el rojo para indicar alerta, pero elegante
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+  // O SI PREFIERES MANTENER EL VERDE DE MEDICI, USA ESTE:
+  // background: linear-gradient(135deg, #00bfa5 0%, #008f7a 100%);
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; 
+  padding-bottom: 50px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+// TARJETA
+.card {
+  background: $white;
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  width: 90%;
+  max-width: 460px;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  border-top: 5px solid $medici-red; // Borde superior rojo
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; // Animación de "sacudida" suave
+
+  // Icono
+  .icon-wrapper {
+    margin-bottom: 1.5rem;
+    .icon-circle {
+      width: 90px; height: 90px;
+      background: rgba($medici-red, 0.1); // Fondo rojo transparente
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto;
+      
+      .cross-mark { 
+        font-size: 45px; 
+        color: $medici-red; 
+        line-height: 1; 
+      }
+    }
+  }
+
+  h1 { color: $medici-red; font-weight: 700; margin-bottom: 0.5rem; font-size: 1.8rem; }
+  p { color: #7f8c8d; font-size: 1rem; margin-bottom: 5px; }
+  
+  .motivo {
+    font-size: 0.9rem;
+    color: #95a5a6;
+    margin-bottom: 25px;
+    font-style: italic;
+  }
+
+  // BOTÓN
+  .btn-medici {
+    background-color: $medici-red;
+    color: white;
+    border: none;
+    border-radius: 50px; // Píldora
+    padding: 14px 40px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba($medici-red, 0.3);
+
+    &:hover {
+      background-color: $medici-red-dark;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba($medici-red, 0.4);
+    }
+  }
+}
+
+// OLA SVG
+.wave-container {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; line-height: 0; z-index: 1;
+  svg { display: block; width: 100%; height: auto; }
+}
+
+// Animación de "Error" (Sacudida)
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}

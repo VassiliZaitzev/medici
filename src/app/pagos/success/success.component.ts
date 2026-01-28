@@ -15,9 +15,6 @@ export class SuccessComponent implements OnInit {
   public paymentId: string | null = '';
   public estado: string = 'procesando'; // 'procesando' | 'exito' | 'error'
 
-  private intentos = 0;
-  private maxIntentos = 5;
-
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.paymentId = params['payment_id'];
@@ -33,31 +30,31 @@ export class SuccessComponent implements OnInit {
   verificarPago(id: string) {
     this.pagoService.consultarEstado(Number(id)).subscribe({
       next: (res: any) => {
-        // Validamos los dos estados posibles de éxito
-        if (res.estado === 'approved' || res.estado === 'APROBADO') {
-          this.estado = 'exito';
+        // Verificamos si el pago fue aprobado
+        if (res.Estado === 'approved' || res.estado === 'approved') {
+          
+          this.estado = 'exito'; // Esto muestra el HTML de éxito
           localStorage.setItem('pago_status', 'approved');
-          setTimeout(() => this.router.navigate(['/chat-clinico']), 3000);
-        }
-        // Si el backend dice que aún no llega el webhook
-        else if (
-          res.estado === 'pending_webhook' &&
-          this.intentos < this.maxIntentos
-        ) {
-          this.intentos++;
-          console.log(
-            `Intento ${this.intentos}: Esperando notificación de Mercado Pago...`,
-          );
-          setTimeout(() => this.verificarPago(id), 3000); // Espera 3 segundos entre intentos
+
+          // --- CAMBIO AQUÍ ---
+          // Eliminamos el setTimeout que redirigía solo.
+          // Ahora la pantalla se quedará quieta esperando al usuario.
+          console.log('Pago confirmado. Esperando que el usuario presione volver.');
+          
         } else {
-          this.estado = 'error';
+          // Si no está aprobado aún, seguimos preguntando
+          setTimeout(() => this.verificarPago(id), 3000);
         }
       },
-      error: (err) => {
-        // Solo entra aquí si la API se cayó o no hay internet
-        console.error('Error de conexión con el servidor');
-        this.estado = 'error';
+      error: () => {
+        // Si hay error de conexión (404), reintentamos
+        setTimeout(() => this.verificarPago(id), 3000);
       },
     });
+  }
+
+  // Esta función se llamará SOLAMENTE cuando presiones el botón
+  volverAlInicio() {
+    this.router.navigate(['/chat-clinico']);
   }
 }
