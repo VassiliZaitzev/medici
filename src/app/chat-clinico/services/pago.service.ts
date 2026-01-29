@@ -8,10 +8,10 @@ export class PagoService {
   private http = inject(HttpClient);
 
   crearPago() {
-    return this.http.post<any>('https://localhost:7172/api/Pago/crear', {});
+    return this.http.post<any>('https://localhost:7172/api/pago/crear', {});
   }
 
   consultarEstado(paymentId: number) {
-    return this.http.get(`https://localhost:7172/api/Pago/estado/${paymentId}`);
+    return this.http.get(`https://localhost:7172/api/pago/estado/${paymentId}`);
   }
 }
