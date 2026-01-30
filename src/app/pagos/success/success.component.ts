@@ -13,7 +13,7 @@ export class SuccessComponent implements OnInit {
   private pagoService = inject(PagoService);
 
   public paymentId: string | null = '';
-  public estado: string = 'procesando'; // 'procesando' | 'exito' | 'error'
+  public estado: string = 'procesando'; 
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -30,31 +30,25 @@ export class SuccessComponent implements OnInit {
   verificarPago(id: string) {
     this.pagoService.consultarEstado(Number(id)).subscribe({
       next: (res: any) => {
-        // Verificamos si el pago fue aprobado
         if (res.Estado === 'approved' || res.estado === 'approved') {
           
-          this.estado = 'exito'; // Esto muestra el HTML de éxito
+          this.estado = 'exito'; 
           localStorage.setItem('pago_status', 'approved');
 
-          // --- CAMBIO AQUÍ ---
-          // Eliminamos el setTimeout que redirigía solo.
-          // Ahora la pantalla se quedará quieta esperando al usuario.
           console.log('Pago confirmado. Esperando que el usuario presione volver.');
           
         } else {
-          // Si no está aprobado aún, seguimos preguntando
+
           setTimeout(() => this.verificarPago(id), 3000);
         }
       },
       error: () => {
-        // Si hay error de conexión (404), reintentamos
         setTimeout(() => this.verificarPago(id), 3000);
       },
     });
   }
 
-  // Esta función se llamará SOLAMENTE cuando presiones el botón
   volverAlInicio() {
-    this.router.navigate(['/chat-clinico']);
+    this.router.navigate(['/chat']);
   }
 }

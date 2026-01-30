@@ -10,6 +10,6 @@ export class FailureComponent {
   private router = inject(Router);
 
   reintentar() {
-    this.router.navigate(['/chat-clinico']);
+    this.router.navigate(['/chat']);
   }
 }

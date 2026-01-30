@@ -28,10 +28,22 @@
 
     <div *ngIf="impresionVisible" class="impresion-seccion">
       <h3>Impresión Diagnóstica</h3>
-      <button (click)="generarPDF()" class="btn btn-secondary mb-3">Generar PDF</button>
+      <button (click)="generarPDF()" class="btn-secondary-action">
+        Generar PDF
+      </button>
     </div>
 
-    <button (click)="pagar()">Pagar con Mercado Pago</button>
+    <div class="payment-wrapper">
+      <button (click)="pagar()" class="btn-mercado-pago">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+          <line x1="1" y1="10" x2="23" y2="10"></line>
+        </svg>
+        Pagar con Mercado Pago
+      </button>
+    </div>
+
 
   </div>
 </section>
