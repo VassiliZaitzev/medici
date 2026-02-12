@@ -33,6 +33,21 @@ export class ChatService {
     );
   }
 
+  sendBigMessage(message: string): Observable<any> {
+
+    var mensaje = {
+      "Mensaje": message
+    }
+    console.log("mensaje: "+ mensaje)
+    return this.http.post<any>(`https://localhost:7172/api/Chat/GptEnviarBigMensaje`, mensaje).pipe(
+      catchError(() => {
+        return of(null);
+      })
+    );
+  }
+
+
+
   listarChat(codigo: string): Observable<Chat[]> {
     return this.http
       .get<Chat[]>(`${this.urlBase}/Chat/ListarChat/${codigo}`)

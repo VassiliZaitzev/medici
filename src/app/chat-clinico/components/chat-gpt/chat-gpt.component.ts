@@ -209,7 +209,13 @@ export class ChatGptComponent implements OnInit {
           ${this.listaFonasa.join('\n')}
         `;
 
-        this.chatgptService.sendMessage(messaheFonasa).subscribe({
+        // var mensajeCodigos:string = `
+        //   Responde **solo** con JSON válido. No incluyas texto adicional.
+        //   Indica qué exámenes médicos con Fonasa o sin ella sirven para un paciente ${this.usuario.genero} DE ${this.usuario.edad} AÑOS, SU REQUERIMIENTO ES : "${this.mensajeClave}"
+        //   Responde con campos "nombre" y "utilidad". Formato ejemplo:: ${JSON.stringify(formato)}
+        // `;
+
+        this.chatgptService.sendBigMessage(messaheFonasa).subscribe({
           next: (res) => {
             const rawResponse = res.choices[0].message.content;
             const cleanedResponse = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
