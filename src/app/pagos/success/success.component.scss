@@ -1,7 +1,7 @@
-// VARIABLES MEDICI
-$medici-teal: #00bfa5;
-$medici-teal-dark: #008f7a;
-$medici-bg: #e0f2f1;
+// VARIABLES Medicy
+$Medicy-teal: #00bfa5;
+$Medicy-teal-dark: #008f7a;
+$Medicy-bg: #e0f2f1;
 $text-dark: #2c3e50;
 $white: #ffffff;
 
@@ -10,8 +10,8 @@ $white: #ffffff;
   position: relative;
   width: 100%;
   min-height: 100vh;
-  // Fondo verde Medici Degradado
-  background: linear-gradient(135deg, $medici-teal 0%, darken($medici-teal, 20%) 100%);
+  // Fondo verde Medicy Degradado
+  background: linear-gradient(135deg, $Medicy-teal 0%, darken($Medicy-teal, 20%) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,14 +40,14 @@ $white: #ffffff;
   // ... (Tus estilos de spinner, iconos y botones se mantienen igual aquí) ...
   &.loading-card .spinner {
     width: 50px; height: 50px; margin: 0 auto 20px;
-    border: 4px solid #f3f3f3; border-top: 4px solid $medici-teal; border-radius: 50%;
+    border: 4px solid #f3f3f3; border-top: 4px solid $Medicy-teal; border-radius: 50%;
     animation: spin 1s linear infinite;
   }
   
   .icon-wrapper .icon-circle {
-      width: 90px; height: 90px; background: rgba($medici-teal, 0.1); border-radius: 50%;
+      width: 90px; height: 90px; background: rgba($Medicy-teal, 0.1); border-radius: 50%;
       display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;
-      .check-mark { font-size: 45px; color: $medici-teal; }
+      .check-mark { font-size: 45px; color: $Medicy-teal; }
       &.error { background: rgba(231, 76, 60, 0.1); .check-mark { color: #e74c3c; } }
   }
 
@@ -57,14 +57,14 @@ $white: #ffffff;
   .comprobante {
     background: #f4f6f7; padding: 12px 20px; border-radius: 12px; margin: 25px 0;
     border: 1px dashed #bdc3c7; color: $text-dark; display: inline-block;
-    strong { display: block; color: $medici-teal; font-family: monospace; font-size: 1.2rem; }
+    strong { display: block; color: $Medicy-teal; font-family: monospace; font-size: 1.2rem; }
   }
 
-  .btn-medici {
-    background-color: $medici-teal; color: white; border: none; border-radius: 50px;
+  .btn-Medicy {
+    background-color: $Medicy-teal; color: white; border: none; border-radius: 50px;
     padding: 14px 40px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%;
     transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    &:hover { background-color: $medici-teal-dark; transform: translateY(-2px); }
+    &:hover { background-color: $Medicy-teal-dark; transform: translateY(-2px); }
     &.btn-error { background-color: #e74c3c; }
   }
 }

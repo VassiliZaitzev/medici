@@ -1,1 +1,1 @@
-# medici
+# Medicy

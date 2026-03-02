@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "medici": {
+    "Medicy": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -24,7 +24,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/medici",
+            "outputPath": "dist/Medicy",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -77,10 +77,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "medici:build:production"
+              "buildTarget": "Medicy:build:production"
             },
             "development": {
-              "buildTarget": "medici:build:development"
+              "buildTarget": "Medicy:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "medici:build"
+            "buildTarget": "Medicy:build"
           }
         },
         "test": {

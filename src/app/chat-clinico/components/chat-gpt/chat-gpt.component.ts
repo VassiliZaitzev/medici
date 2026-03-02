@@ -41,8 +41,8 @@ export class ChatGptComponent implements OnInit {
   // public impresionVisible: boolean = false;
   public examenrepuesta: ExamenFonasaRequest[] = [];
 
-  public pagoHabilitado: boolean = false;
-  public DEV_FORCE_PAGO = false; 
+  public pagoHabilitado: boolean = true;
+  public DEV_FORCE_PAGO = true; 
   public examenConfirmado: any = null;
   
 ngOnInit() {
