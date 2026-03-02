@@ -113,7 +113,7 @@ ngOnInit() {
     this.procesarCola();
   }
 
-  private procesarCola() {
+private procesarCola() {
     if (this.isProcessing || this.messageQueue.length === 0) return;
 
     this.isProcessing = true;
@@ -127,6 +127,7 @@ ngOnInit() {
       return;
     }
 
+    // ETAPA 3: Confirmación de código de examen
     if (this.etapa === 3) {
       this.confirmarCodigoExamen(nextMessage);
 
@@ -140,11 +141,18 @@ ngOnInit() {
       return;
     }
 
+    // ETAPA 1: Recopilación de datos del usuario
     if (this.etapa === 1) {
       this.manejarFlujoUsuario(nextMessage);
 
-      this.isProcessing = false;
-      this.loading = false;
+      // 🔥 MODIFICACIÓN CLAVE AQUÍ 🔥
+      // Solo apagamos el loading si el usuario AÚN tiene que ingresar datos (etapa 1).
+      // Si ya ingresó el RUT, manejarFlujoUsuario() cambia la etapa a 2 y llama a la IA.
+      // En ese caso, dejamos el loading en TRUE para que siga "pensando" y bloquee el input.
+      if (this.etapa === 1) {
+        this.isProcessing = false;
+        this.loading = false;
+      }
 
       setTimeout(() => {
         this.procesarCola();
@@ -153,6 +161,7 @@ ngOnInit() {
       return;
     }
 
+    // ETAPA 0: Evaluación inicial de la IA (Saber si es una consulta médica)
     this.chatgptService.sendMessage(chatEnv.condicion + nextMessage).subscribe({
       next: (res) => {
         let mensajeBot = '';
@@ -405,7 +414,7 @@ pagar() {
   });
 }
 
-  private procesarExamenesIA() {
+private procesarExamenesIA() {
     const formato = [
       {
         tipo: 'RADIOGRAFIA',
@@ -481,6 +490,14 @@ pagar() {
 
             this.pagoHabilitado = false;
             this.etapa = 0;
+            
+            // Si no hay exámenes, hacemos el push normal
+            this.chatRegistrado.push(chat);
+            localStorage.setItem(
+              'chatStorage',
+              JSON.stringify(this.chatRegistrado),
+            );
+            
           } else {
             let htmlMsg =
               'Basado en tu solicitud, he identificado los siguientes exámenes:<br>';
@@ -496,8 +513,26 @@ pagar() {
 
             chat.mensaje = htmlMsg;
 
+            // Pushear el primer mensaje con los exámenes
+            this.chatRegistrado.push(chat);
+
+            // Crear y pushear el segundo mensaje de cierre
+            let chatCierre: Chat = {
+              idChat: 0,
+              codigoCliente: this.savedKey || '',
+              mensaje: '✅ <b>Diagnóstico completado.</b> <br><br> Por favor, utiliza el botón de abajo para realizar el pago de tu orden médica.',
+              idTipoMensaje: 1, 
+              fecha: new Date(),
+            };
+            this.chatRegistrado.push(chatCierre);
+
             this.pagoHabilitado = true;
             this.etapa = 4;
+            
+            localStorage.setItem(
+              'chatStorage',
+              JSON.stringify(this.chatRegistrado),
+            );
           }
         } catch (e) {
           console.error('Error al procesar la respuesta de la IA:', e);
@@ -507,14 +542,13 @@ pagar() {
 
           this.pagoHabilitado = false;
           this.etapa = 0;
+          
+          this.chatRegistrado.push(chat);
+          localStorage.setItem(
+            'chatStorage',
+            JSON.stringify(this.chatRegistrado),
+          );
         }
-
-        this.chatRegistrado.push(chat);
-
-        localStorage.setItem(
-          'chatStorage',
-          JSON.stringify(this.chatRegistrado),
-        );
 
         this.loading = false;
         this.isProcessing = false;
@@ -633,11 +667,11 @@ pagar() {
   private activarPagoDev() {
 
   this.usuario = {
-    nombre: this.usuario.nombre || 'Nicolas Fuentemavida',
-    email: this.usuario.email || 'nicolasfuentemavida07@gmail.com',
+    nombre: this.usuario.nombre || 'Manolo Pérez',
+    email: this.usuario.email || 'ni.fuentemavida@duocuc.cl',
     genero: this.usuario.genero || 'masculino',
     edad: this.usuario.edad || 25,
-    rut: this.usuario.rut || '20451143-8',
+    rut: this.usuario.rut || '11111111-1',
     chatGptKey: this.savedKey || 'DEV-KEY',
   };
 
