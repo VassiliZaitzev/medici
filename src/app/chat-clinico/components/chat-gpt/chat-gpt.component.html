@@ -23,27 +23,32 @@
             d="M4.5 19.5L19.5 12L4.5 4.5V10.5L12 12L4.5 13.5V19.5Z" />
         </svg>
       </button>
+
     </form>
 
 
-    <div *ngIf="impresionVisible" class="impresion-seccion">
+
+    <!-- <div *ngIf="impresionVisible" class="impresion-seccion">
       <h3>Impresión Diagnóstica</h3>
       <button (click)="generarPDF()" class="btn-secondary-action">
         Generar PDF
       </button>
-    </div>
-
-    <div class="payment-wrapper">
-      <button (click)="pagar()" class="btn-mercado-pago">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-          <line x1="1" y1="10" x2="23" y2="10"></line>
-        </svg>
-        Pagar con Mercado Pago
-      </button>
-    </div>
-
+    </div> -->
 
   </div>
+  <div *ngIf="pagoHabilitado" class="payment-float">
+    <button (click)="pagar()" class="btn-mercado-pago floating">
+
+      <span class="badge-monto">$1.000</span>
+
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+        <line x1="1" y1="10" x2="23" y2="10"></line>
+      </svg>
+
+    </button>
+  </div>
+
+
 </section>
