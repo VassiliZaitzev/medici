@@ -27,15 +27,21 @@
           Reenviar PDF a otro correo
         </label>
 
-        <input type="email" #correoInput (input)="correoReenvio = correoInput.value" placeholder="correo@ejemplo.com"
-          style="
+<input 
+  type="email" 
+  #correoInput
+  [value]="correoReenvio"
+  (input)="correoReenvio = correoInput.value"
+  placeholder="correo@ejemplo.com"
+  style="
     width: 100%;
     padding: 10px 12px;
     border: 1px solid rgba(0,0,0,.15);
     border-radius: 10px;
     outline: none;
     margin-bottom: 10px;
-  " />
+  " 
+/>
 
 
         <button class="btn-Medicy " style="width:100%; opacity: 1; margin-bottom: 10px;" [disabled]="reenviando || !correoReenvio"

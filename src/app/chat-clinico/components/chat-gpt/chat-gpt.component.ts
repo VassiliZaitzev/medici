@@ -42,7 +42,7 @@ export class ChatGptComponent implements OnInit {
   public examenrepuesta: ExamenFonasaRequest[] = [];
 
   public pagoHabilitado: boolean = true;
-  public DEV_FORCE_PAGO = true; 
+  public DEV_FORCE_PAGO = true
   public examenConfirmado: any = null;
   
 ngOnInit() {

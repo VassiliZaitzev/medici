@@ -6,6 +6,8 @@ import { Observable, map } from 'rxjs';
 import { Contact } from '../interfaces/contact.interfaces';
 import { Sexo } from '../interfaces/sexo.interfaces';
 
+// 1. Importamos tu archivo maestro de entornos
+import { environment } from '../../../environments/environment';
 
 interface ContactResponse {
   id: number;
@@ -15,7 +17,7 @@ interface ContactResponse {
   providedIn: 'root',
 })
 export class HomeService {
-  private readonly API_BASE = 'https://localhost:7172/api';
+  private readonly API_BASE = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
