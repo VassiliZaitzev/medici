@@ -26,6 +26,9 @@ export class ChatService {
     }
   }
 
+
+
+  // METODO CHAT GPT
   sendMessage(message: string): Observable<any> {
     return this.http.get<any>(`${this.urlBase}/Chat/GptEnviarMensaje/${message}`).pipe(
       catchError(() => {
@@ -33,7 +36,6 @@ export class ChatService {
       })
     );
   }
-
   sendBigMessage(message: string): Observable<any> {
     var mensaje = {
       "Mensaje": message
@@ -45,6 +47,28 @@ export class ChatService {
       })
     );
   }
+  // FIN METODO CHAT GPT
+
+  // METODO CLAUDE GPT
+  sendMessageV2(message: string): Observable<any> {
+    return this.http.get<any>(`${this.urlBase}/Chat/ClaudeEnviarMensajeV2/${message}`).pipe(
+      catchError(() => {
+        return of(null);
+      })
+    );
+  }
+  sendBigMessageV2(message: string): Observable<any> {
+    var mensaje = {
+      "Mensaje": message
+    }
+    console.log("mensaje Claude V2: ", mensaje)
+    return this.http.post<any>(`${this.urlBase}/Chat/ClaudeEnviarBigMensajeV2`, mensaje).pipe(
+      catchError(() => {
+        return of(null);
+      })
+    );
+  }
+  // FIN METODO CLAUDE GPT
 
   listarChat(codigo: string): Observable<Chat[]> {
         return this.http
