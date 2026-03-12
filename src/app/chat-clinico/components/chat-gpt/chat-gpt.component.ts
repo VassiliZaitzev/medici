@@ -56,7 +56,7 @@ ngOnInit() {
           idChat: 0,
           codigoCliente: this.savedKey || '',
           mensaje:
-            '¡Hola! Soy tu asistente virtual. Estoy aquí para ayudarte con órdenes médicas y tipos de exámenes que necesitas. ¿En qué puedo asistirte hoy?',
+            '¡Hola! Soy tu asistente virtual. Estoy aquí para ayudarte con exámenes que necesitas. ¿En qué puedo asistirte hoy?',
           idTipoMensaje: 1,
           fecha: this.fechaActual,
         };
