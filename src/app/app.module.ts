@@ -11,7 +11,6 @@ import { PagosComponent } from './pagos/pagos.component';
 import { SuccessComponent } from './pagos/success/success.component';
 import { FailureComponent } from './pagos/failure/failure.component';
 
-
 registerLocaleData(localeEs);
 @NgModule({
   declarations: [AppComponent, PagosComponent, SuccessComponent, FailureComponent],

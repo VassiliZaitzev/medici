@@ -41,8 +41,8 @@ export class ChatGptComponent implements OnInit {
   // public impresionVisible: boolean = false;
   public examenrepuesta: ExamenFonasaRequest[] = [];
 
-  public pagoHabilitado: boolean = true;
-  public DEV_FORCE_PAGO = true
+  public pagoHabilitado: boolean = false;
+  public DEV_FORCE_PAGO = false
   public examenConfirmado: any = null;
   
 ngOnInit() {
@@ -319,7 +319,7 @@ private procesarCola() {
 
         this.usuario.edad = edadNum;
         chat.mensaje =
-          'Casi terminamos. Necesito tu RUT para la orden médica (ej: 12345678-9):';
+          'Casi terminamos. Necesito tu RUT para concluir (ej: 12345678-9):';
         this.pasoActual++;
         break;
 
@@ -520,7 +520,7 @@ private procesarExamenesIA() {
             let chatCierre: Chat = {
               idChat: 0,
               codigoCliente: this.savedKey || '',
-              mensaje: '✅ <b>Diagnóstico completado.</b> <br><br> Por favor, utiliza el botón de abajo para realizar el pago de tu orden médica.',
+              mensaje: '✅ <b>Diagnóstico completado.</b> <br><br> Por favor, utilice el botón de abajo para realizar el pago de su solicitud de examen.',
               idTipoMensaje: 1, 
               fecha: new Date(),
             };
@@ -610,7 +610,7 @@ private procesarExamenesIA() {
       idChat: 0,
       codigoCliente: this.savedKey || '',
       mensaje:
-        '✅ <b>Selección confirmada.</b> El botón de pago ahora está habilitado debajo para que puedas obtener tu orden médica.',
+        '✅ <b>Selección confirmada.</b> El botón de pago ahora está habilitado debajo para que puedas obtener su examen.',
       idTipoMensaje: 1,
       fecha: new Date(),
     };
@@ -655,7 +655,7 @@ private procesarExamenesIA() {
     this.examenConfirmado = examenSeleccionado;
 
     chat.mensaje = `✅ Examen confirmado: <b>${examenSeleccionado.codigo}</b> - ${examenSeleccionado.nombre}.
-    <br><br>Ahora puedes generar tu orden médica y proceder al pago.`;
+    <br><br>Ahora puedes generar tu solictud de examen y proceder al pago.`;
 
     this.pagoHabilitado = true;
     this.etapa = 4;

@@ -9,7 +9,7 @@
 
     <h1>¡Pago Exitoso!</h1>
     <p>Gracias por confiar en <strong>Medicy</strong>.</p>
-    <p>Tu orden médica ha sido generada correctamente.</p>
+    <p>Tu solicitud de examen ha sido generada correctamente.</p>
 
     <div class="comprobante">
       <span>ID Transacción:</span>
@@ -20,7 +20,7 @@
 
       <hr style="margin: 20px 0; opacity: 0.2;">
 
-      <h3 style="margin-bottom: 10px;">Orden Médica</h3>
+      <h3 style="margin-bottom: 10px;">Solicitud de Examen</h3>
 
       <div style="text-align:left; margin-top: 10px;">
         <label style="font-size: 13px; opacity: .9; display:block; margin-bottom:6px;">
@@ -49,7 +49,7 @@
           {{ reenviando ? 'Enviando...' : '📩 Reenviar PDF' }}
         </button>
         <button class="btn-Medicy" style="width:100%; margin-bottom: 12px;" (click)="imprimirOrden()">
-          🖨️ Imprimir Orden
+          🖨️ Imprimir solicitud de examen
         </button>
 
         <p *ngIf="mensajeReenvio" style="margin-top:10px; font-size:13px;"
@@ -59,7 +59,7 @@
       </div>
 
       <div id="print-area" style="display:none;">
-        <h2>Orden Médica</h2>
+        <h2>Examen</h2>
         <p><strong>Fecha:</strong> {{ orden?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
         <p><strong>Paciente:</strong> {{ orden?.paciente?.nombre }}</p>
         <p><strong>Edad:</strong> {{ orden?.paciente?.edad }}</p>
