@@ -26,11 +26,13 @@ const routes: Routes = [
   },
   { path: 'pagos/success', component: SuccessComponent },
   { path: 'pagos/failure', component: FailureComponent },
+
   {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
   },
+
   {
     path: '**',
     redirectTo: 'home'
@@ -39,6 +41,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {}

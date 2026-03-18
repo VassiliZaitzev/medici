@@ -8,24 +8,27 @@ const routes: Routes = [
     path: '',
     component: HomeLayoutComponent,
     children: [
-      { path: 'index', component: IndexComponent },
-      { path: '', redirectTo: 'index', pathMatch: 'full' },
-      { path: '**', redirectTo: 'index' },
-    ],
-  },
-  {
-    path: '',
-    redirectTo: '',
-    pathMatch: 'full',
-  },
-  {
-    path: '**',
-    redirectTo: '',
-  },
+      {
+        path: '',
+        redirectTo: 'index',
+        pathMatch: 'full'
+      },
+
+      {
+        path: 'index',
+        component: IndexComponent
+      },
+
+      {
+        path: '**',
+        redirectTo: 'index'
+      }
+    ]
+  }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class HomeRoutingModule {}

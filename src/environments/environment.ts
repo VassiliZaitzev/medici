@@ -4,5 +4,6 @@ export const chatEnv = {
 };
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7172/api'
+  // apiUrl: 'https://localhost:7172/api'
+  apiUrl: 'http://186.64.121.182:7172/api'
 };

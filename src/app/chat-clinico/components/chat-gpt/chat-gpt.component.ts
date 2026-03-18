@@ -406,7 +406,7 @@ pagar() {
       // 🧪 Si quieres forzar redirección a success aunque falle:
       if (this.DEV_FORCE_PAGO) {
         window.location.href =
-          'http://localhost:4200/pagos/success?payment_id=999999999&status=approved';
+          'http://medicyst:4200/pagos/success?payment_id=999999999&status=approved';
       } else {
         window.alert('No se pudo crear el pago.');
       }
