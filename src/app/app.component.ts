@@ -1,20 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'] 
 })
-export class AppComponent implements OnInit {
-
+export class AppComponent {
   title = 'Medicy';
 
-  constructor(private router: Router) {}
-
-  ngOnInit(): void {
-    if (this.router.url === '/' || this.router.url === '') {
-      this.router.navigate(['/home/index']);
-    }
-  }
+  // Borramos el constructor con el Router y el ngOnInit
 }

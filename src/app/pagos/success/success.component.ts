@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PagoService } from '../../chat-clinico/services/pago.service';
 
+// 🔥 1. Importamos la constante 'demo' desde tu archivo de entorno
+// (Ajusta la cantidad de puntos '../' si tu archivo environment está en otra ruta)
+import { demo } from '../../../environments/environment';
+
 @Component({
   selector: 'app-success',
   templateUrl: './success.component.html',
@@ -12,6 +16,10 @@ import { PagoService } from '../../chat-clinico/services/pago.service';
 export class SuccessComponent implements OnInit {
   estado: string = 'procesando';
   paymentId: string = '';
+  
+  // Variable nueva para el Modo Demo
+  externalReference: string = ''; 
+  
   impresionVisible: boolean = false;
   orden: any;
 
@@ -27,45 +35,67 @@ export class SuccessComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      this.paymentId = params['payment_id'];
+      // Tomamos el ID del pago
+      this.paymentId = params['payment_id'] || params['collection_id'];
+
+      // Capturamos la referencia externa de MercadoPago para el Modo Demo
+      this.externalReference = params['external_reference'] || params['ref'];
+
+      // Tomamos el estado directamente de la URL
+      const estadoEnUrl = params['status'] || params['collection_status'];
 
       if (!this.paymentId) {
         this.estado = 'error';
         return;
       }
 
-      // Usamos el servicio en lugar de this.http.get
-      this.pagoService.consultarEstado(this.paymentId).subscribe({
-        next: (res) => {
-          const estadoPago = res.estado || res.Estado;
-
-          if (estadoPago === 'approved') {
-            this.estado = 'exito';
-
-            const ordenStorage = localStorage.getItem('ordenMedica');
-            if (ordenStorage) {
-              this.orden = JSON.parse(ordenStorage);
-              this.impresionVisible = true;
-
-              // opcional: precargar email del paciente si existe
-              this.correoReenvio = this.orden?.paciente?.email || '';
+      // Si la URL dice 'approved', mostramos éxito inmediato.
+      if (estadoEnUrl === 'approved') {
+        this.marcarComoExito();
+      } else {
+        // Plan B: consultamos al backend
+        this.pagoService.consultarEstado(this.paymentId).subscribe({
+          next: (res) => {
+            const estadoPago = res.estado || res.Estado;
+            if (estadoPago === 'approved') {
+              this.marcarComoExito();
+            } else {
+              this.estado = 'error';
             }
-          } else {
+          },
+          error: () => {
             this.estado = 'error';
-          }
-        },
-        error: () => {
-          this.estado = 'error';
-        },
-      });
+          },
+        });
+      }
     });
+  }
+
+  // Método auxiliar para no repetir código
+  marcarComoExito() {
+    this.estado = 'exito'; 
+
+    const ordenStorage = localStorage.getItem('ordenMedica');
+    if (ordenStorage) {
+      this.orden = JSON.parse(ordenStorage);
+      this.impresionVisible = true;
+      this.correoReenvio = this.orden?.paciente?.email || '';
+    }
   }
 
   imprimirOrden() {
     this.estado = 'procesando';
 
-    // Usamos el servicio en lugar de this.http.get
-    this.pagoService.descargarPdf(this.paymentId).subscribe({
+    // 🔥 2. LA MAGIA: Armamos la URL dinámicamente según el entorno
+    let urlConParametros = `${this.paymentId}`;
+
+    // Si tu constante demo dice que es true, le pasamos la llave al backend
+    if (demo.isDemoMode) {
+      urlConParametros += `?chatKey=${this.externalReference}`;
+    }
+
+    // Le pasamos la URL modificada al servicio
+    this.pagoService.descargarPdf(urlConParametros).subscribe({
       next: (res) => {
         this.estado = 'exito'; // Quita el loader
 
@@ -96,14 +126,14 @@ export class SuccessComponent implements OnInit {
 
     const email = (this.correoReenvio || '').trim().toLowerCase();
 
-    // 1. Validar que no esté vacío
+    // Validar que no esté vacío
     if (email === '') {
       this.mensajeReenvioTipo = 'error';
       this.mensajeReenvio = '⚠️ Por favor, ingresa un correo electrónico.';
       return;
     }
 
-    // 2. Validar que tenga formato de correo real
+    // Validar que tenga formato de correo real
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       this.mensajeReenvioTipo = 'error';

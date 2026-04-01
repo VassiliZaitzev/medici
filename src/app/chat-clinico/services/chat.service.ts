@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, OnInit } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { Chat } from '../interfaces/chat.interface';
 import { Examen } from '../interfaces/examen.interface';
@@ -29,13 +29,26 @@ export class ChatService {
 
 
   // METODO CHAT GPT
-  sendMessage(message: string): Observable<any> {
-    return this.http.get<any>(`${this.urlBase}/Chat/GptEnviarMensaje/${message}`).pipe(
-      catchError(() => {
-        return of(null);
-      })
-    );
-  }
+sendMessage(message: string): Observable<any> {
+  return this.http.post(
+    `${this.urlBase}/Chat/GptEnviarMensaje`,
+    { mensaje: message },
+    { responseType: 'text' }
+  ).pipe(
+    // 🔥 AQUÍ TRANSFORMAS UNA SOLA VEZ
+    map((res: any) => {
+      try {
+        return typeof res === 'string' ? JSON.parse(res) : res;
+      } catch {
+        return null;
+      }
+    }),
+    catchError((error) => {
+      console.error("ERROR:", error);
+      return of(null);
+    })
+  );
+}
   sendBigMessage(message: string): Observable<any> {
     var mensaje = {
       "Mensaje": message

@@ -42,46 +42,48 @@ export class ChatGptComponent implements OnInit {
   public examenrepuesta: ExamenFonasaRequest[] = [];
 
   public pagoHabilitado: boolean = false;
-  public DEV_FORCE_PAGO = false
+  public DEV_FORCE_PAGO = false;
   public examenConfirmado: any = null;
-  
-ngOnInit() {
-  if (!this.savedKey) return;
 
-  this.chatgptService
-    .listarChat(this.savedKey.toString())
-    .subscribe((res) => {
-      if (res.length <= 0 || res == null) {
-        const mensajeBienvenida: Chat = {
-          idChat: 0,
-          codigoCliente: this.savedKey || '',
-          mensaje:
-            '¡Hola! Soy tu asistente virtual. Estoy aquí para ayudarte con exámenes que necesitas. ¿En qué puedo asistirte hoy?',
-          idTipoMensaje: 1,
-          fecha: this.fechaActual,
-        };
+  ngOnInit() {
+    if (!this.savedKey) return;
 
-        this.chatRegistrado.push(mensajeBienvenida);
-        localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
-        return;
+    this.chatgptService
+      .listarChat(this.savedKey.toString())
+      .subscribe((res) => {
+        if (res.length <= 0 || res == null) {
+          const mensajeBienvenida: Chat = {
+            idChat: 0,
+            codigoCliente: this.savedKey || '',
+            mensaje:
+"¡Hola! Soy tu asistente virtual 😊. Estoy aquí para orientarte sobre los exámenes médicos que podrías necesitar. Mientras más detalles puedas entregar sobre tus síntomas o situación, mejor será la recomendación que podré darte. ¿En qué puedo ayudarte hoy?",
+            idTipoMensaje: 1,
+            fecha: this.fechaActual,
+          };
+
+          this.chatRegistrado.push(mensajeBienvenida);
+          localStorage.setItem(
+            'chatStorage',
+            JSON.stringify(this.chatRegistrado),
+          );
+          return;
+        }
+
+        this.chatRegistrado = res;
+      });
+
+    this.chatgptService.obtenerExamenFonasa().subscribe((res) => {
+      if (res.length <= 0 || res === null) return;
+
+      this.listaFonasa = res.map((ex) => `${ex.codigo} - ${ex.glosa}`);
+      this.examenesFonasa = res;
+
+      // ✅ SOLO PARA PRUEBAS (DEV): habilitar pago sin IA
+      if (this.DEV_FORCE_PAGO) {
+        this.activarPagoDev();
       }
-
-      this.chatRegistrado = res;
     });
-
-  this.chatgptService.obtenerExamenFonasa().subscribe((res) => {
-    if (res.length <= 0 || res === null) return;
-
-    this.listaFonasa = res.map((ex) => `${ex.codigo} - ${ex.glosa}`);
-    this.examenesFonasa = res;
-
-    // ✅ SOLO PARA PRUEBAS (DEV): habilitar pago sin IA
-    if (this.DEV_FORCE_PAGO) {
-      this.activarPagoDev();
-    }
-  });
-}
-
+  }
 
   sendMessage() {
     if (this.loading || !this.inputText.trim()) return;
@@ -114,63 +116,58 @@ ngOnInit() {
   }
 
 private procesarCola() {
-    if (this.isProcessing || this.messageQueue.length === 0) return;
+  if (this.isProcessing || this.messageQueue.length === 0) return;
 
-    this.isProcessing = true;
-    this.loading = true;
+  this.isProcessing = true;
+  this.loading = true;
 
-    const nextMessage = this.messageQueue.shift();
+  const nextMessage = this.messageQueue.shift();
 
-    if (!nextMessage) {
-      this.isProcessing = false;
-      this.loading = false;
-      return;
-    }
+  if (!nextMessage) {
+    this.isProcessing = false;
+    this.loading = false;
+    return;
+  }
 
-    // ETAPA 3: Confirmación de código de examen
-    if (this.etapa === 3) {
-      this.confirmarCodigoExamen(nextMessage);
+  // ETAPA 3: Confirmación de código de examen
+  if (this.etapa === 3) {
+    this.confirmarCodigoExamen(nextMessage);
 
-      this.isProcessing = false;
-      this.loading = false;
+    this.isProcessing = false;
+    this.loading = false;
 
-      setTimeout(() => {
-        this.procesarCola();
-      }, 300);
+    setTimeout(() => {
+      this.procesarCola();
+    }, 300);
 
-      return;
-    }
+    return;
+  }
 
-    // ETAPA 1: Recopilación de datos del usuario
+  // ETAPA 1: Recopilación de datos del usuario
+  if (this.etapa === 1) {
+    this.manejarFlujoUsuario(nextMessage);
+
     if (this.etapa === 1) {
-      this.manejarFlujoUsuario(nextMessage);
-
-      // 🔥 MODIFICACIÓN CLAVE AQUÍ 🔥
-      // Solo apagamos el loading si el usuario AÚN tiene que ingresar datos (etapa 1).
-      // Si ya ingresó el RUT, manejarFlujoUsuario() cambia la etapa a 2 y llama a la IA.
-      // En ese caso, dejamos el loading en TRUE para que siga "pensando" y bloquee el input.
-      if (this.etapa === 1) {
-        this.isProcessing = false;
-        this.loading = false;
-      }
-
-      setTimeout(() => {
-        this.procesarCola();
-      }, 300);
-
-      return;
+      this.isProcessing = false;
+      this.loading = false;
     }
 
-    // ETAPA 0: Evaluación inicial de la IA (Saber si es una consulta médica)
-    this.chatgptService.sendMessage(chatEnv.condicion + nextMessage).subscribe({
-      next: (res) => {
-        let mensajeBot = '';
+    setTimeout(() => {
+      this.procesarCola();
+    }, 300);
 
-        if (!res || !res.choices || !res.choices[0]?.message?.content) {
-          console.log('Respuesta IA:', res);
-          throw new Error('Respuesta inválida');
-        }
+    return;
+  }  // ETAPA 0: Evaluación inicial de la IA
+  this.chatgptService.sendMessage(nextMessage).subscribe({
+    next: (res) => {
+      let mensajeBot = '';
 
+      // 🔥 CAPTURA ERROR DE OPENAI (quota, etc.)
+      if (res?.error?.message) {
+        mensajeBot = '❌ Error IA: ' + res.error.message;
+      }
+      // 🔥 RESPUESTA NORMAL
+      else if (res?.choices && res.choices[0]?.message?.content) {
         const content = res.choices[0].message.content.trim().toLowerCase();
 
         if (content === 'false') {
@@ -187,50 +184,55 @@ private procesarCola() {
           mensajeBot =
             '⚠️ No pude interpretar correctamente tu solicitud. Intenta nuevamente.';
         }
+      }
+      // 🔥 RESPUESTA RARA
+      else {
+        console.log('Respuesta IA rara:', res);
+        mensajeBot = '⚠️ Respuesta inesperada del servidor.';
+      }
 
-        if (mensajeBot.trim() !== '') {
-          this.chatRegistrado.push({
-            idChat: 0,
-            codigoCliente: this.savedKey || '',
-            mensaje: mensajeBot,
-            idTipoMensaje: 1,
-            fecha: new Date(),
-          });
+      // 🔥 SIEMPRE MOSTRAR EN CHAT
+      this.chatRegistrado.push({
+        idChat: 0,
+        codigoCliente: this.savedKey || '',
+        mensaje: mensajeBot,
+        idTipoMensaje: 1,
+        fecha: new Date(),
+      });
 
-          localStorage.setItem(
-            'chatStorage',
-            JSON.stringify(this.chatRegistrado),
-          );
-        }
-      },
+      localStorage.setItem(
+        'chatStorage',
+        JSON.stringify(this.chatRegistrado),
+      );
+    },
 
-      error: (err) => {
-        console.error('Error IA:', err);
+    error: (err) => {
+      console.error('Error IA:', err);
 
-        this.chatRegistrado.push({
-          idChat: 0,
-          codigoCliente: this.savedKey || '',
-          mensaje:
-            '🔧 Sistema en modo desarrollo (IA no disponible). Puedes continuar con el flujo normalmente.',
-          idTipoMensaje: 1,
-          fecha: new Date(),
-        });
+      this.chatRegistrado.push({
+        idChat: 0,
+        codigoCliente: this.savedKey || '',
+        mensaje:
+          '❌ Error de conexión con la IA. Intenta nuevamente.',
+        idTipoMensaje: 1,
+        fecha: new Date(),
+      });
 
-        this.etapa = 1;
-        this.pasoActual = 0;
-        this.mensajeClave = nextMessage;
-      },
+      this.etapa = 1;
+      this.pasoActual = 0;
+      this.mensajeClave = nextMessage;
+    },
 
-      complete: () => {
-        this.isProcessing = false;
-        this.loading = false;
+    complete: () => {
+      this.isProcessing = false;
+      this.loading = false;
 
-        setTimeout(() => {
-          this.procesarCola();
-        }, 500);
-      },
-    });
-  }
+      setTimeout(() => {
+        this.procesarCola();
+      }, 500);
+    },
+  });
+}
 
   private manejarFlujoUsuario(respuesta: string) {
     let chat: Chat = {
@@ -379,42 +381,45 @@ private procesarCola() {
     console.log(chatRequest);
   }
 
-pagar() {
-  // ✅ Armamos el request que el backend espera: ChatRequestEN
-  const request = {
-    usuario: this.usuario,
-    examenFonasa: this.examenrepuesta,
-    chat: this.chatRegistrado,
-  };
+  pagar() {
+    // ✅ Armamos el request que el backend espera: ChatRequestEN
+    const request = {
+      usuario: this.usuario,
+      examenFonasa: this.examenrepuesta,
+      chat: this.chatRegistrado,
+    };
 
-  // ✅ Guardamos en localStorage para que la pantalla success lo use
-  localStorage.setItem('ordenMedica', JSON.stringify({
-    paciente: this.usuario,
-    examenes: this.examenrepuesta,
-    fecha: new Date(),
-  }));
+    // ✅ Guardamos en localStorage para que la pantalla success lo use
+    localStorage.setItem(
+      'ordenMedica',
+      JSON.stringify({
+        paciente: this.usuario,
+        examenes: this.examenrepuesta,
+        fecha: new Date(),
+      }),
+    );
 
-  // 🔥 LLAMADA REAL A MERCADO PAGO (backend)
-  this.pagoService.crearPagoConPdf(request).subscribe({
-    next: (resp) => {
-      // resp.url viene del backend, redirecciona a MP
-      window.location.href = resp.url;
-    },
-    error: (err) => {
-      console.error('Error al crear pago:', err);
+    // 🔥 LLAMADA REAL A MERCADO PAGO (backend)
+    this.pagoService.crearPagoConPdf(request).subscribe({
+      next: (resp) => {
+        // resp.url viene del backend, redirecciona a MP
+        window.location.href = resp.url;
+      },
+      error: (err) => {
+        console.error('Error al crear pago:', err);
 
-      // 🧪 Si quieres forzar redirección a success aunque falle:
-      if (this.DEV_FORCE_PAGO) {
-        window.location.href =
-          'http://medicyst:4200/pagos/success?payment_id=999999999&status=approved';
-      } else {
-        window.alert('No se pudo crear el pago.');
-      }
-    },
-  });
-}
+        // 🧪 Si quieres forzar redirección a success aunque falle:
+        if (this.DEV_FORCE_PAGO) {
+          window.location.href =
+            'http://medicyst:4200/pagos/success?payment_id=999999999&status=approved';
+        } else {
+          window.alert('No se pudo crear el pago.');
+        }
+      },
+    });
+  }
 
-private procesarExamenesIA() {
+  private procesarExamenesIA() {
     const formato = [
       {
         tipo: 'RADIOGRAFIA',
@@ -490,14 +495,13 @@ private procesarExamenesIA() {
 
             this.pagoHabilitado = false;
             this.etapa = 0;
-            
+
             // Si no hay exámenes, hacemos el push normal
             this.chatRegistrado.push(chat);
             localStorage.setItem(
               'chatStorage',
               JSON.stringify(this.chatRegistrado),
             );
-            
           } else {
             let htmlMsg =
               'Basado en tu solicitud, he identificado los siguientes exámenes:<br>';
@@ -520,15 +524,16 @@ private procesarExamenesIA() {
             let chatCierre: Chat = {
               idChat: 0,
               codigoCliente: this.savedKey || '',
-              mensaje: '✅ <b>Diagnóstico completado.</b> <br><br> Por favor, utilice el botón de abajo para realizar el pago de su solicitud de examen.',
-              idTipoMensaje: 1, 
+              mensaje:
+                '✅ <b>Diagnóstico completado.</b> <br><br> Por favor, utilice el botón de abajo para realizar el pago de su solicitud de examen.',
+              idTipoMensaje: 1,
               fecha: new Date(),
             };
             this.chatRegistrado.push(chatCierre);
 
             this.pagoHabilitado = true;
             this.etapa = 4;
-            
+
             localStorage.setItem(
               'chatStorage',
               JSON.stringify(this.chatRegistrado),
@@ -542,7 +547,7 @@ private procesarExamenesIA() {
 
           this.pagoHabilitado = false;
           this.etapa = 0;
-          
+
           this.chatRegistrado.push(chat);
           localStorage.setItem(
             'chatStorage',
@@ -665,53 +670,51 @@ private procesarExamenesIA() {
   }
 
   private activarPagoDev() {
+    this.usuario = {
+      nombre: this.usuario.nombre || 'Manolo Pérez',
+      email: this.usuario.email || 'ni.fuentemavida@duocuc.cl',
+      genero: this.usuario.genero || 'masculino',
+      edad: this.usuario.edad || 25,
+      rut: this.usuario.rut || '11111111-1',
+      chatGptKey: this.savedKey || 'DEV-KEY',
+    };
 
-  this.usuario = {
-    nombre: this.usuario.nombre || 'Manolo Pérez',
-    email: this.usuario.email || 'ni.fuentemavida@duocuc.cl',
-    genero: this.usuario.genero || 'masculino',
-    edad: this.usuario.edad || 25,
-    rut: this.usuario.rut || '11111111-1',
-    chatGptKey: this.savedKey || 'DEV-KEY',
-  };
+    this.examenrepuesta = [
+      {
+        tipo: 'RADIOGRAFIA',
+        detalles: [
+          {
+            codigo: '0403001',
+            nombre:
+              'TOMOGRAFIA COMPUTARIZADA DE CRANEO ENCEFALICA SIN CONTRASTE',
+            utilidad:
+              'Evaluar hemorragia, masas, edema o causas de cefalea persistente.',
+          },
+          {
+            codigo: '0405001',
+            nombre:
+              'RESONANCIA MAGNETICA CRANEO ENCEFALICA SIN MEDIO DE CONTRASTE',
+            utilidad:
+              'Detectar patología intracraneal no visible en TAC (tumores, infartos, etc.).',
+          },
+        ],
+      },
+    ];
 
-  this.examenrepuesta = [
-    {
-      tipo: 'RADIOGRAFIA',
-      detalles: [
-        {
-          codigo: '0403001',
-          nombre:
-            'TOMOGRAFIA COMPUTARIZADA DE CRANEO ENCEFALICA SIN CONTRASTE',
-          utilidad:
-            'Evaluar hemorragia, masas, edema o causas de cefalea persistente.',
-        },
-        {
-          codigo: '0405001',
-          nombre:
-            'RESONANCIA MAGNETICA CRANEO ENCEFALICA SIN MEDIO DE CONTRASTE',
-          utilidad:
-            'Detectar patología intracraneal no visible en TAC (tumores, infartos, etc.).',
-        },
-      ],
-    },
-  ];
+    this.examenConfirmado = this.examenrepuesta[0].detalles?.[0] || null;
 
-  this.examenConfirmado = this.examenrepuesta[0].detalles?.[0] || null;
+    this.pagoHabilitado = true;
+    this.etapa = 4;
 
-  this.pagoHabilitado = true;
-  this.etapa = 4;
+    this.chatRegistrado.push({
+      idChat: 0,
+      codigoCliente: this.savedKey || '',
+      idTipoMensaje: 1,
+      fecha: new Date(),
+      mensaje:
+        '🧪 <b>MODO PRUEBA:</b> Pago habilitado y exámenes cargados. Puedes presionar el botón de pago.',
+    });
 
-  this.chatRegistrado.push({
-    idChat: 0,
-    codigoCliente: this.savedKey || '',
-    idTipoMensaje: 1,
-    fecha: new Date(),
-    mensaje:
-      '🧪 <b>MODO PRUEBA:</b> Pago habilitado y exámenes cargados. Puedes presionar el botón de pago.',
-  });
-
-  localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
-}
-
+    localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
+  }
 }
