@@ -36,6 +36,19 @@ export class ChatGptComponent implements OnInit {
   public usuario: Partial<Usuario> = {};
   public mensajeClave: string = '';
 
+  // MEJORAS DE CHAT CLINICO
+  public anamnesis: any = {
+    tiempo: null,
+    intensidad: null,
+    ubicacion: null,
+    lado: null,
+    sintomasExtra: null
+  };
+
+  public preguntasPendientes: string[] = [];
+  public preguntaActualIndex: number = 0;
+
+
   public examenesFonasa: ExamenFonasa[] = [];
   public listaFonasa: string[] = [];
   // public impresionVisible: boolean = false;
@@ -86,8 +99,8 @@ export class ChatGptComponent implements OnInit {
   }
 
   sendMessage() {
-    if (this.loading || !this.inputText.trim()) return;
-
+    // if (this.loading || !this.inputText.trim()) return;
+if (!this.inputText.trim()) return;
     // this.impresionVisible = false;
 
     const userMessage = this.inputText.trim();
@@ -130,34 +143,65 @@ private procesarCola() {
   }
 
   // ETAPA 3: Confirmación de código de examen
-  if (this.etapa === 3) {
+if (this.etapa === 3) {
+
+  this.loading = true;
+
+  setTimeout(() => {
     this.confirmarCodigoExamen(nextMessage);
 
-    this.isProcessing = false;
     this.loading = false;
+    this.isProcessing = false;
 
-    setTimeout(() => {
+    if (this.messageQueue.length > 0) {
       this.procesarCola();
-    }, 300);
-
-    return;
-  }
-
-  // ETAPA 1: Recopilación de datos del usuario
-  if (this.etapa === 1) {
-    this.manejarFlujoUsuario(nextMessage);
-
-    if (this.etapa === 1) {
-      this.isProcessing = false;
-      this.loading = false;
     }
 
-    setTimeout(() => {
-      this.procesarCola();
-    }, 300);
+  }, 300);
 
-    return;
-  }  // ETAPA 0: Evaluación inicial de la IA
+  return;
+}
+
+  // ETAPA 1: Recopilación de datos del usuario
+if (this.etapa === 1) {
+
+  this.loading = true;
+
+  setTimeout(() => {
+    this.manejarFlujoUsuario(nextMessage);
+
+    this.loading = false;
+    this.isProcessing = false;
+
+    if (this.messageQueue.length > 0) {
+      this.procesarCola();
+    }
+
+  }, 300);
+
+  return;
+}  // ETAPA 0: 
+
+      //  ETAPA 2: ANAMNESIS (PREGUNTAS CLÍNICAS)
+if (this.etapa === 2) {
+  this.loading = true;
+
+  setTimeout(() => {
+    this.manejarAnamnesis(nextMessage);
+
+    this.loading = false;
+    this.isProcessing = false;
+
+    // 🔥 CLAVE: continuar flujo SOLO si hay más mensajes
+    if (this.messageQueue.length > 0) {
+      this.procesarCola();
+    }
+
+  }, 300);
+
+  return;
+}
+  // Evaluación inicial de la IA
   this.chatgptService.sendMessage(nextMessage).subscribe({
     next: (res) => {
       let mensajeBot = '';
@@ -228,7 +272,7 @@ private procesarCola() {
       this.loading = false;
 
       setTimeout(() => {
-        this.procesarCola();
+        // this.procesarCola();
       }, 500);
     },
   });
@@ -344,7 +388,9 @@ private procesarCola() {
 
         this.chatRegistrado.push(chat);
 
-        this.procesarExamenesIA();
+        // 🔥 NUEVO FLUJO
+        this.iniciarEvaluacionClinica();
+        // this.procesarExamenesIA();
         return;
     }
 
@@ -436,7 +482,15 @@ private procesarCola() {
     var messaheFonasa: string = `
   Eres un asistente médico virtual que responde SOLO en JSON.
   Paciente ${this.usuario.genero} de ${this.usuario.edad} años.
+
+  // Requerimiento: "${this.mensajeClave}"
   Requerimiento: "${this.mensajeClave}"
+
+  Información adicional:
+  - Tiempo: ${this.anamnesis.tiempo || 'No especificado'}
+  - Intensidad: ${this.anamnesis.intensidad || 'No especificado'}
+  - Lado: ${this.anamnesis.lado || 'No aplica'}
+  - Observaciones: ${this.anamnesis.sintomasExtra || 'No especificado'}
 
   INSTRUCCIÓN TÉCNICA CRÍTICA:
   1. Responde estrictamente en JSON.
@@ -717,4 +771,129 @@ private procesarCola() {
 
     localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
   }
+
+  private iniciarEvaluacionClinica() {
+  if (this.tieneInfoSuficiente(this.mensajeClave)) {
+    this.procesarExamenesIA();
+    return;
+  }
+
+  this.generarPreguntas();
+
+  if (this.preguntasPendientes.length > 0) {
+    this.etapa = 2;
+
+    this.chatRegistrado.push({
+      idChat: 0,
+      codigoCliente: this.savedKey || '',
+      mensaje: this.preguntasPendientes[0],
+      idTipoMensaje: 1,
+      fecha: new Date(),
+    });
+
+    localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
+  } else {
+    this.procesarExamenesIA();
+  }
+}
+private manejarAnamnesis(respuesta: string) {
+  const input = respuesta.toLowerCase();
+
+  // 🔥 Guardar respuestas básicas
+  if (!this.anamnesis.tiempo && input.match(/\d+\s*(día|dias|semana|mes)/)) {
+    this.anamnesis.tiempo = input;
+  }
+
+  if (!this.anamnesis.intensidad && input.match(/\d\/10|leve|moderado|fuerte/)) {
+    this.anamnesis.intensidad = input;
+  }
+
+  if (!this.anamnesis.lado && input.match(/derecho|izquierdo/)) {
+    this.anamnesis.lado = input;
+  }
+
+  if (!this.anamnesis.sintomasExtra && input.match(/inflam|hincha|rojo|dolor al mover/)) {
+    this.anamnesis.sintomasExtra = input;
+  }
+
+  this.preguntaActualIndex++;
+
+  if (this.preguntaActualIndex < this.preguntasPendientes.length) {
+    this.chatRegistrado.push({
+      idChat: 0,
+      codigoCliente: this.savedKey || '',
+      mensaje: this.preguntasPendientes[this.preguntaActualIndex],
+      idTipoMensaje: 1,
+      fecha: new Date(),
+    });
+
+    localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
+  }  else {
+  // 🔥 TERMINÓ ANAMNESIS
+  this.etapa = 0;
+
+  // 🔥 liberar estado ANTES
+  this.loading = false;
+  this.isProcessing = false;
+
+  // 🔥 llamar directo (SIN setTimeout ni loading)
+  this.procesarExamenesIA();
+}
+}
+private generarPreguntas() {
+  const texto = this.mensajeClave.toLowerCase();
+  let preguntas: string[] = [];
+
+  // 🔹 1. TIEMPO (siempre primero)
+  if (!texto.match(/\d+\s*(día|dias|semana|mes|año)/)) {
+    preguntas.push('¿Desde cuándo tienes el dolor?');
+  }
+
+  // 🔹 2. INTENSIDAD
+  if (!texto.match(/leve|moderado|fuerte|\d\/10/)) {
+    preguntas.push('En una escala del 1 al 10, ¿qué tan fuerte es el dolor?');
+  }
+
+  // 🔹 3. DETECTAR SI ES PROBABLEMENTE MÚSCULO-ESQUELÉTICO
+  const esMusculoEsqueletico = texto.match(
+    /dolor|molestia|lesion|golpe|torcedura|inflamacion/
+  );
+
+  if (esMusculoEsqueletico) {
+
+    // 👉 LADO (SIEMPRE SI HAY DOLOR FÍSICO)
+    if (!texto.match(/derecho|izquierdo/)) {
+      preguntas.push('¿Es en el lado derecho o izquierdo?');
+    }
+
+    // 👉 MOVIMIENTO
+    preguntas.push('¿Te duele al moverlo o también en reposo?');
+  }
+
+  // 🔹 4. SÍNTOMAS EXTRA
+  if (!texto.match(/inflam|hincha|rojo/)) {
+    preguntas.push('¿Has notado inflamación o hinchazón?');
+  }
+
+  this.preguntasPendientes = preguntas;
+  this.preguntaActualIndex = 0;
+}
+private tieneInfoSuficiente(texto: string): boolean {
+  const t = texto.toLowerCase();
+
+  let puntos = 0;
+
+  if (t.match(/\d+\s*(día|dias|semana|mes)/)) puntos++;
+  if (t.match(/leve|moderado|fuerte|\d\/10/)) puntos++;
+  if (t.match(/inflam|hincha|rojo/)) puntos++;
+
+  const tieneLado = t.match(/derecho|izquierdo/);
+
+  // 🔥 REGLA INTELIGENTE:
+  // si tiene buen contexto → continuar aunque no haya lado
+  if (puntos >= 2) return true;
+
+  // si no hay suficiente info → seguir preguntando
+  return false;
+}
 }

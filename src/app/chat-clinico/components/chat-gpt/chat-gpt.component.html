@@ -12,11 +12,11 @@
       <span class="dot"></span><span class="dot"></span><span class="dot"></span>
       <span class="loading-text">Escribiendo...</span>
     </div>
-<form (submit)="sendMessage()" class="input-form modern">
+<form (ngSubmit)="sendMessage()" class="input-form modern">
       <input type="text" [(ngModel)]="inputText" name="message" placeholder="Escribe tu mensaje aquí..."
-        [disabled]="loading || pagoHabilitado" autocomplete="off" />
+       [disabled]="pagoHabilitado" />
       
-      <button type="submit" [disabled]="loading || !inputText.trim() || pagoHabilitado">
+      <button type="submit" [disabled]="!inputText.trim() || pagoHabilitado">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
           class="icon-send">
           <path stroke-linecap="round" stroke-linejoin="round"
