@@ -29,7 +29,7 @@ export class ChatGptComponent implements OnInit {
   public chatRegistrado: Chat[] = [];
   private savedKey = localStorage.getItem('chatgpt_key');
   pdfBase64Safe!: SafeResourceUrl;
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(private sanitizer: DomSanitizer) { }
 
   public etapa: number = 0;
   public pasoActual: number = 0;
@@ -69,7 +69,7 @@ export class ChatGptComponent implements OnInit {
             idChat: 0,
             codigoCliente: this.savedKey || '',
             mensaje:
-"¡Hola! Soy tu asistente virtual 😊. Estoy aquí para orientarte sobre los exámenes médicos que podrías necesitar. Mientras más detalles puedas entregar sobre tus síntomas o situación, mejor será la recomendación que podré darte. ¿En qué puedo ayudarte hoy?",
+              "¡Hola! Soy tu asistente virtual 😊. Estoy aquí para orientarte sobre los exámenes médicos que podrías necesitar. Mientras más detalles puedas entregar sobre tus síntomas o situación, mejor será la recomendación que podré darte. ¿En qué puedo ayudarte hoy?",
             idTipoMensaje: 1,
             fecha: this.fechaActual,
           };
@@ -100,7 +100,7 @@ export class ChatGptComponent implements OnInit {
 
   sendMessage() {
     // if (this.loading || !this.inputText.trim()) return;
-if (!this.inputText.trim()) return;
+    if (!this.inputText.trim()) return;
     // this.impresionVisible = false;
 
     const userMessage = this.inputText.trim();
@@ -128,155 +128,162 @@ if (!this.inputText.trim()) return;
     this.procesarCola();
   }
 
-private procesarCola() {
-  if (this.isProcessing || this.messageQueue.length === 0) return;
+  private procesarCola() {
+    if (this.isProcessing || this.messageQueue.length === 0) return;
 
-  this.isProcessing = true;
-  this.loading = true;
+    this.isProcessing = true;
+    this.loading = true;
 
-  const nextMessage = this.messageQueue.shift();
+    const nextMessage = this.messageQueue.shift();
 
-  if (!nextMessage) {
-    this.isProcessing = false;
-    this.loading = false;
-    return;
-  }
-
-  // ETAPA 3: Confirmación de código de examen
-if (this.etapa === 3) {
-
-  this.loading = true;
-
-  setTimeout(() => {
-    this.confirmarCodigoExamen(nextMessage);
-
-    this.loading = false;
-    this.isProcessing = false;
-
-    if (this.messageQueue.length > 0) {
-      this.procesarCola();
-    }
-
-  }, 300);
-
-  return;
-}
-
-  // ETAPA 1: Recopilación de datos del usuario
-if (this.etapa === 1) {
-
-  this.loading = true;
-
-  setTimeout(() => {
-    this.manejarFlujoUsuario(nextMessage);
-
-    this.loading = false;
-    this.isProcessing = false;
-
-    if (this.messageQueue.length > 0) {
-      this.procesarCola();
-    }
-
-  }, 300);
-
-  return;
-}  // ETAPA 0: 
-
-      //  ETAPA 2: ANAMNESIS (PREGUNTAS CLÍNICAS)
-if (this.etapa === 2) {
-  this.loading = true;
-
-  setTimeout(() => {
-    this.manejarAnamnesis(nextMessage);
-
-    this.loading = false;
-    this.isProcessing = false;
-
-    // 🔥 CLAVE: continuar flujo SOLO si hay más mensajes
-    if (this.messageQueue.length > 0) {
-      this.procesarCola();
-    }
-
-  }, 300);
-
-  return;
-}
-  // Evaluación inicial de la IA
-  this.chatgptService.sendMessage(nextMessage).subscribe({
-    next: (res) => {
-      let mensajeBot = '';
-
-      // 🔥 CAPTURA ERROR DE OPENAI (quota, etc.)
-      if (res?.error?.message) {
-        mensajeBot = '❌ Error IA: ' + res.error.message;
-      }
-      // 🔥 RESPUESTA NORMAL
-      else if (res?.choices && res.choices[0]?.message?.content) {
-        const content = res.choices[0].message.content.trim().toLowerCase();
-
-        if (content === 'false') {
-          mensajeBot =
-            'Hola, sólo puedo ayudarte con órdenes médicas y tipo de exámenes que necesitas.';
-        } else if (content === 'true' && this.etapa === 0) {
-          mensajeBot =
-            'Perfecto, para ayudarte mejor, necesito algunos datos personales. Por favor, proporciona tu nombre completo.';
-
-          this.etapa = 1;
-          this.pasoActual = 0;
-          this.mensajeClave = nextMessage;
-        } else {
-          mensajeBot =
-            '⚠️ No pude interpretar correctamente tu solicitud. Intenta nuevamente.';
-        }
-      }
-      // 🔥 RESPUESTA RARA
-      else {
-        console.log('Respuesta IA rara:', res);
-        mensajeBot = '⚠️ Respuesta inesperada del servidor.';
-      }
-
-      // 🔥 SIEMPRE MOSTRAR EN CHAT
-      this.chatRegistrado.push({
-        idChat: 0,
-        codigoCliente: this.savedKey || '',
-        mensaje: mensajeBot,
-        idTipoMensaje: 1,
-        fecha: new Date(),
-      });
-
-      localStorage.setItem(
-        'chatStorage',
-        JSON.stringify(this.chatRegistrado),
-      );
-    },
-
-    error: (err) => {
-      console.error('Error IA:', err);
-
-      this.chatRegistrado.push({
-        idChat: 0,
-        codigoCliente: this.savedKey || '',
-        mensaje:
-          '❌ Error de conexión con la IA. Intenta nuevamente.',
-        idTipoMensaje: 1,
-        fecha: new Date(),
-      });
-
-      this.etapa = 1;
-      this.pasoActual = 0;
-      this.mensajeClave = nextMessage;
-    },
-
-    complete: () => {
+    if (!nextMessage) {
       this.isProcessing = false;
       this.loading = false;
+      return;
+    }
+
+    // ETAPA 3: Confirmación de código de examen
+    if (this.etapa === 3) {
+
+      this.loading = true;
 
       setTimeout(() => {
-        // this.procesarCola();
-      }, 500);
-    },
-  });
-}
+        this.confirmarCodigoExamen(nextMessage);
+
+        this.loading = false;
+        this.isProcessing = false;
+
+        if (this.messageQueue.length > 0) {
+          this.procesarCola();
+        }
+
+      }, 300);
+
+      return;
+    }
+
+    // ETAPA 1: Recopilación de datos del usuario
+    if (this.etapa === 1) {
+
+      this.loading = true;
+
+      setTimeout(() => {
+        this.manejarFlujoUsuario(nextMessage);
+
+        this.loading = false;
+        this.isProcessing = false;
+
+        if (this.messageQueue.length > 0) {
+          this.procesarCola();
+        }
+
+      }, 300);
+
+      return;
+    }  // ETAPA 0: 
+
+    //  ETAPA 2: ANAMNESIS (PREGUNTAS CLÍNICAS)
+    if (this.etapa === 2) {
+      this.loading = true;
+
+      setTimeout(() => {
+        this.manejarAnamnesis(nextMessage);
+
+        this.loading = false;
+        this.isProcessing = false;
+
+        // 🔥 CLAVE: continuar flujo SOLO si hay más mensajes
+        if (this.messageQueue.length > 0) {
+          this.procesarCola();
+        }
+
+      }, 300);
+
+      return;
+    }
+    // Evaluación inicial de la IA
+    this.chatgptService.sendMessage(nextMessage).subscribe({
+      next: (res) => {
+        let mensajeBot = '';
+
+        // 🔥 CAPTURA ERROR DE OPENAI (quota, etc.)
+        if (res?.error?.message) {
+          mensajeBot = '❌ Error IA: ' + res.error.message;
+        }
+        // 🔥 RESPUESTA NORMAL
+        else if (res?.choices && res.choices[0]?.message?.content) {
+          const content = res.choices[0].message.content.trim().toLowerCase();
+
+          if (content === 'false') {
+            mensajeBot =
+              'Hola, sólo puedo ayudarte con órdenes médicas y tipo de exámenes que necesitas.';
+          } else if (content === 'true' && this.etapa === 0) {
+            mensajeBot =
+              'Perfecto, para ayudarte mejor, necesito algunos datos personales. Por favor, proporciona tu nombre completo.';
+
+            this.etapa = 1;
+            this.pasoActual = 0;
+            this.mensajeClave = nextMessage;
+            this.anamnesis = {
+              tiempo: '',
+              intensidad: '',
+              lado: '',
+              sintomasExtra: ''
+            };
+          } else {
+            mensajeBot =
+              '⚠️ No pude interpretar correctamente tu solicitud. Intenta nuevamente.';
+          }
+        }
+        // 🔥 RESPUESTA RARA
+        else {
+          console.log('Respuesta IA rara:', res);
+          mensajeBot = '⚠️ Respuesta inesperada del servidor.';
+        }
+
+        // 🔥 SIEMPRE MOSTRAR EN CHAT
+        this.chatRegistrado.push({
+          idChat: 0,
+          codigoCliente: this.savedKey || '',
+          mensaje: mensajeBot,
+          idTipoMensaje: 1,
+          fecha: new Date(),
+        });
+
+        localStorage.setItem(
+          'chatStorage',
+          JSON.stringify(this.chatRegistrado),
+        );
+      },
+
+      error: (err) => {
+        console.error('Error IA:', err);
+
+        this.chatRegistrado.push({
+          idChat: 0,
+          codigoCliente: this.savedKey || '',
+          mensaje:
+            '❌ Error de conexión con la IA. Intenta nuevamente.',
+          idTipoMensaje: 1,
+          fecha: new Date(),
+        });
+
+        this.etapa = 1;
+        this.pasoActual = 0;
+        this.mensajeClave = nextMessage;
+
+      },
+
+      complete: () => {
+        this.isProcessing = false;
+        this.loading = false;
+
+        setTimeout(() => {
+          // this.procesarCola();
+        }, 500);
+      },
+    });
+  }
 
   private manejarFlujoUsuario(respuesta: string) {
     let chat: Chat = {
@@ -465,177 +472,221 @@ if (this.etapa === 2) {
     });
   }
 
-  private procesarExamenesIA() {
-    const formato = [
-      {
-        tipo: 'RADIOGRAFIA',
-        detalles: [
-          {
-            codigo: 'CODIGO',
-            nombre: 'NOMBRE DEL EXAMEN',
-            utilidad: 'Explicación breve de para qué sirve este examen',
-          },
-        ],
-      },
-    ];
+private procesarExamenesIA() {
 
-    var messaheFonasa: string = `
-  Eres un asistente médico virtual que responde SOLO en JSON.
-  Paciente ${this.usuario.genero} de ${this.usuario.edad} años.
+  // 🔥 VALIDACIÓN DE LADO
+  if (this.requiereLado(this.mensajeClave) && !this.anamnesis.lado) {
 
-  // Requerimiento: "${this.mensajeClave}"
-  Requerimiento: "${this.mensajeClave}"
+    this.chatRegistrado.push({
+      idChat: 0,
+      codigoCliente: this.savedKey || '',
+      mensaje: 'Antes de continuar, necesito saber: ¿es en el lado derecho o izquierdo?',
+      idTipoMensaje: 1,
+      fecha: new Date(),
+    });
 
-  Información adicional:
-  - Tiempo: ${this.anamnesis.tiempo || 'No especificado'}
-  - Intensidad: ${this.anamnesis.intensidad || 'No especificado'}
-  - Lado: ${this.anamnesis.lado || 'No aplica'}
-  - Observaciones: ${this.anamnesis.sintomasExtra || 'No especificado'}
+    this.etapa = 2;
+    this.preguntasPendientes = ['¿Es en el lado derecho o izquierdo?'];
+    this.preguntaActualIndex = 0;
 
-  INSTRUCCIÓN TÉCNICA CRÍTICA:
-  1. Responde estrictamente en JSON.
-  2. No incluyas \`\`\`json.
-  3. No inventes códigos, usa los de la lista.
-  4. Si no encuentras exámenes relacionados, devuelve [].
+    this.loading = false;
+    this.isProcessing = false;
+    return;
+  }
 
-  Formato esperado:
-  ${JSON.stringify(formato)}
+  // 🔥 FILTRAR LISTA (IMPORTANTE PARA NO ROMPER RATE LIMIT)
+  const listaReducida = this.filtrarListaFonasa().slice(0, 40);
 
-  Lista:
-  ${this.listaFonasa.join('\n')}
-  `;
+  const formato = [
+    {
+      tipo: 'RADIOGRAFIA',
+      detalles: [
+        {
+          codigo: 'CODIGO',
+          nombre: 'NOMBRE DEL EXAMEN',
+          utilidad: 'Explicación breve de para qué sirve este examen',
+        },
+      ],
+    },
+  ];
 
-    this.loading = true;
-    this.isProcessing = true;
+  const messaheFonasa = `
+Eres un asistente médico virtual que responde SOLO en JSON.
 
-    this.chatgptService.sendBigMessage(messaheFonasa).subscribe({
-      next: (res) => {
-        let chat: Chat = {
-          idChat: 0,
-          codigoCliente: this.savedKey || '',
-          mensaje: '',
-          idTipoMensaje: 1,
-          fecha: new Date(),
-        };
+Paciente ${this.usuario.genero} de ${this.usuario.edad} años.
+Requerimiento: "${this.mensajeClave}"
 
-        try {
-          const rawResponse =
-            res?.choices?.[0]?.message?.content || res?.mensaje || res;
+Información adicional:
+- Tiempo: ${this.anamnesis.tiempo || 'No especificado'}
+- Intensidad: ${this.anamnesis.intensidad || 'No especificado'}
+- Lado: ${this.anamnesis.lado || 'No aplica'}
+- Observaciones: ${this.anamnesis.sintomasExtra || 'No especificado'}
 
-          if (!rawResponse) {
-            throw new Error('Respuesta vacía');
-          }
+Responde SOLO en JSON válido.
+Si no hay resultados, devuelve [].
 
-          let cleanedResponse = rawResponse
+Formato:
+${JSON.stringify(formato)}
+
+Lista:
+${listaReducida.join('\n')}
+`;
+
+  this.loading = true;
+  this.isProcessing = true;
+
+  this.chatgptService.sendBigMessage(messaheFonasa).subscribe({
+    next: (res) => {
+
+      let chat: Chat = {
+        idChat: 0,
+        codigoCliente: this.savedKey || '',
+        mensaje: '',
+        idTipoMensaje: 1,
+        fecha: new Date(),
+      };
+
+      try {
+
+        // 🔥 NORMALIZAR RESPUESTA
+        let rawResponse: any = '';
+
+        if (res?.choices?.[0]?.message?.content) {
+          rawResponse = res.choices[0].message.content;
+        }
+        else if (res?.mensaje) {
+          rawResponse = res.mensaje;
+        }
+        else {
+          rawResponse = res;
+        }
+
+        console.log('RAW RESPONSE:', rawResponse);
+
+        // 🚨 DETECTAR ERRORES DE IA (CLAVE)
+        if (rawResponse?.error) {
+          throw new Error(rawResponse.error.message);
+        }
+
+        if (typeof rawResponse === 'string' && rawResponse.includes('rate_limit')) {
+          throw new Error('Rate limit alcanzado');
+        }
+
+        // 🔥 LIMPIEZA
+        let cleanedResponse = '';
+
+        if (typeof rawResponse === 'string') {
+          cleanedResponse = rawResponse
             .replace(/```json/gi, '')
             .replace(/```/g, '')
             .trim();
+        } else {
+          cleanedResponse = JSON.stringify(rawResponse);
+        }
 
-          const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
+        const jsonMatch = cleanedResponse.match(/\[[\s\S]*\]/);
 
-          if (jsonMatch) {
-            cleanedResponse = jsonMatch[0];
-          }
+        if (jsonMatch) {
+          cleanedResponse = jsonMatch[0];
+        }
 
+        // 🔥 PARSEO SEGURO
+        try {
           this.examenrepuesta = JSON.parse(cleanedResponse);
-
-          if (!Array.isArray(this.examenrepuesta)) {
-            this.examenrepuesta = [this.examenrepuesta];
-          }
-
-          if (this.examenrepuesta.length === 0) {
-            chat.mensaje =
-              'No se encontraron exámenes relacionados con tu requerimiento.';
-
-            this.pagoHabilitado = false;
-            this.etapa = 0;
-
-            // Si no hay exámenes, hacemos el push normal
-            this.chatRegistrado.push(chat);
-            localStorage.setItem(
-              'chatStorage',
-              JSON.stringify(this.chatRegistrado),
-            );
-          } else {
-            let htmlMsg =
-              'Basado en tu solicitud, he identificado los siguientes exámenes:<br>';
-
-            this.examenrepuesta.forEach((ex) => {
-              htmlMsg += `<br><b style="color: #2c3e50;">${ex.tipo}</b><br>`;
-
-              ex.detalles?.forEach((det) => {
-                htmlMsg += `&nbsp;&nbsp;• <b>${det.codigo}</b> - ${det.nombre}<br>`;
-                htmlMsg += `&nbsp;&nbsp;&nbsp;&nbsp;<small><i>Utilidad: ${det.utilidad}</i></small><br>`;
-              });
-            });
-
-            chat.mensaje = htmlMsg;
-
-            // Pushear el primer mensaje con los exámenes
-            this.chatRegistrado.push(chat);
-
-            // Crear y pushear el segundo mensaje de cierre
-            let chatCierre: Chat = {
-              idChat: 0,
-              codigoCliente: this.savedKey || '',
-              mensaje:
-                '✅ <b>Diagnóstico completado.</b> <br><br> Por favor, utilice el botón de abajo para realizar el pago de su solicitud de examen.',
-              idTipoMensaje: 1,
-              fecha: new Date(),
-            };
-            this.chatRegistrado.push(chatCierre);
-
-            this.pagoHabilitado = true;
-            this.etapa = 4;
-
-            localStorage.setItem(
-              'chatStorage',
-              JSON.stringify(this.chatRegistrado),
-            );
-          }
         } catch (e) {
-          console.error('Error al procesar la respuesta de la IA:', e);
+          console.error('Error parseando JSON:', cleanedResponse);
+          throw new Error('JSON inválido');
+        }
+
+        if (!Array.isArray(this.examenrepuesta)) {
+          this.examenrepuesta = [this.examenrepuesta];
+        }
+
+        if (this.examenrepuesta.length === 0) {
 
           chat.mensaje =
-            'Hubo un inconveniente al procesar la lista. Por favor intenta de nuevo.';
+            'No se encontraron exámenes relacionados con tu requerimiento.';
 
           this.pagoHabilitado = false;
           this.etapa = 0;
 
           this.chatRegistrado.push(chat);
-          localStorage.setItem(
-            'chatStorage',
-            JSON.stringify(this.chatRegistrado),
-          );
+
+        } else {
+
+          let htmlMsg =
+            'Basado en tu solicitud, he identificado los siguientes exámenes:<br>';
+
+          this.examenrepuesta.forEach((ex) => {
+            htmlMsg += `<br><b style="color: #2c3e50;">${ex.tipo || 'EXAMEN'}</b><br>`;
+
+            if (ex.detalles && Array.isArray(ex.detalles)) {
+              ex.detalles.forEach((det: any) => {
+                htmlMsg += `&nbsp;&nbsp;• <b>${det.codigo || 'N/A'}</b> - ${det.nombre || 'Sin nombre'}<br>`;
+                htmlMsg += `&nbsp;&nbsp;&nbsp;&nbsp;<small><i>Utilidad: ${det.utilidad || ''}</i></small><br>`;
+              });
+            }
+          });
+
+          chat.mensaje = htmlMsg;
+          this.chatRegistrado.push(chat);
+
+          let chatCierre: Chat = {
+            idChat: 0,
+            codigoCliente: this.savedKey || '',
+            mensaje:
+              '✅ <b>Diagnóstico completado.</b> <br><br> Por favor, utilice el botón de abajo para realizar el pago.',
+            idTipoMensaje: 1,
+            fecha: new Date(),
+          };
+
+          this.chatRegistrado.push(chatCierre);
+
+          this.pagoHabilitado = true;
+          this.etapa = 4;
         }
 
-        this.loading = false;
-        this.isProcessing = false;
+        localStorage.setItem(
+          'chatStorage',
+          JSON.stringify(this.chatRegistrado),
+        );
 
-        setTimeout(() => {
-          const container = document.getElementById('scrollContainer');
-          if (container) container.scrollTop = container.scrollHeight;
-        }, 100);
-      },
+      } catch (e) {
 
-      error: (err) => {
-        console.error('Error en el servicio de IA:', err);
+        console.error('Error general:', e);
 
-        this.loading = false;
-        this.isProcessing = false;
-
-        this.chatRegistrado.push({
-          idChat: 0,
-          codigoCliente: '',
-          idTipoMensaje: 1,
-          fecha: new Date(),
-          mensaje: 'Ocurrió un error de conexión. Intenta nuevamente.',
-        });
+        chat.mensaje =
+          '⚠️ El sistema está ocupado en este momento. Intenta nuevamente en unos minutos.';
 
         this.pagoHabilitado = false;
-      },
-    });
-  }
+        this.etapa = 0;
+
+        this.chatRegistrado.push(chat);
+      }
+
+      this.loading = false;
+      this.isProcessing = false;
+    },
+
+    error: (err) => {
+
+      console.error('Error IA:', err);
+
+      this.loading = false;
+      this.isProcessing = false;
+
+      this.chatRegistrado.push({
+        idChat: 0,
+        codigoCliente: '',
+        idTipoMensaje: 1,
+        fecha: new Date(),
+        mensaje: 'Ocurrió un error de conexión. Intenta nuevamente.',
+      });
+
+      this.pagoHabilitado = false;
+    },
+  });
+}
 
   private validarRutChileno(rut: string): boolean {
     if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rut)) return false;
@@ -773,127 +824,134 @@ if (this.etapa === 2) {
   }
 
   private iniciarEvaluacionClinica() {
-  if (this.tieneInfoSuficiente(this.mensajeClave)) {
-    this.procesarExamenesIA();
-    return;
-  }
-
-  this.generarPreguntas();
-
-  if (this.preguntasPendientes.length > 0) {
-    this.etapa = 2;
-
-    this.chatRegistrado.push({
-      idChat: 0,
-      codigoCliente: this.savedKey || '',
-      mensaje: this.preguntasPendientes[0],
-      idTipoMensaje: 1,
-      fecha: new Date(),
-    });
-
-    localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
-  } else {
-    this.procesarExamenesIA();
-  }
-}
-private manejarAnamnesis(respuesta: string) {
-  const input = respuesta.toLowerCase();
-
-  // 🔥 Guardar respuestas básicas
-  if (!this.anamnesis.tiempo && input.match(/\d+\s*(día|dias|semana|mes)/)) {
-    this.anamnesis.tiempo = input;
-  }
-
-  if (!this.anamnesis.intensidad && input.match(/\d\/10|leve|moderado|fuerte/)) {
-    this.anamnesis.intensidad = input;
-  }
-
-  if (!this.anamnesis.lado && input.match(/derecho|izquierdo/)) {
-    this.anamnesis.lado = input;
-  }
-
-  if (!this.anamnesis.sintomasExtra && input.match(/inflam|hincha|rojo|dolor al mover/)) {
-    this.anamnesis.sintomasExtra = input;
-  }
-
-  this.preguntaActualIndex++;
-
-  if (this.preguntaActualIndex < this.preguntasPendientes.length) {
-    this.chatRegistrado.push({
-      idChat: 0,
-      codigoCliente: this.savedKey || '',
-      mensaje: this.preguntasPendientes[this.preguntaActualIndex],
-      idTipoMensaje: 1,
-      fecha: new Date(),
-    });
-
-    localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
-  }  else {
-  // 🔥 TERMINÓ ANAMNESIS
-  this.etapa = 0;
-
-  // 🔥 liberar estado ANTES
-  this.loading = false;
-  this.isProcessing = false;
-
-  // 🔥 llamar directo (SIN setTimeout ni loading)
-  this.procesarExamenesIA();
-}
-}
-private generarPreguntas() {
-  const texto = this.mensajeClave.toLowerCase();
-  let preguntas: string[] = [];
-
-  // 🔹 1. TIEMPO (siempre primero)
-  if (!texto.match(/\d+\s*(día|dias|semana|mes|año)/)) {
-    preguntas.push('¿Desde cuándo tienes el dolor?');
-  }
-
-  // 🔹 2. INTENSIDAD
-  if (!texto.match(/leve|moderado|fuerte|\d\/10/)) {
-    preguntas.push('En una escala del 1 al 10, ¿qué tan fuerte es el dolor?');
-  }
-
-  // 🔹 3. DETECTAR SI ES PROBABLEMENTE MÚSCULO-ESQUELÉTICO
-  const esMusculoEsqueletico = texto.match(
-    /dolor|molestia|lesion|golpe|torcedura|inflamacion/
-  );
-
-  if (esMusculoEsqueletico) {
-
-    // 👉 LADO (SIEMPRE SI HAY DOLOR FÍSICO)
-    if (!texto.match(/derecho|izquierdo/)) {
-      preguntas.push('¿Es en el lado derecho o izquierdo?');
+    if (this.tieneInfoSuficiente(this.mensajeClave)) {
+      this.procesarExamenesIA();
+      return;
     }
 
-    // 👉 MOVIMIENTO
+    this.generarPreguntas();
+
+    if (this.preguntasPendientes.length > 0) {
+      this.etapa = 2;
+
+      this.chatRegistrado.push({
+        idChat: 0,
+        codigoCliente: this.savedKey || '',
+        mensaje: this.preguntasPendientes[0],
+        idTipoMensaje: 1,
+        fecha: new Date(),
+      });
+
+      localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
+    } else {
+      this.procesarExamenesIA();
+    }
+  }
+  private manejarAnamnesis(respuesta: string) {
+    const input = respuesta.toLowerCase();
+
+    // 🔥 Guardar respuestas básicas
+    if (!this.anamnesis.tiempo && input.match(/\d+\s*(día|dias|semana|mes)/)) {
+      this.anamnesis.tiempo = input;
+    }
+
+    if (!this.anamnesis.intensidad && input.match(/\d\/10|leve|moderado|fuerte/)) {
+      this.anamnesis.intensidad = input;
+    }
+
+    if (!this.anamnesis.lado && input.match(/derecho|derecha|izquierdo|izquierda/)) {
+      this.anamnesis.lado = input;
+    }
+
+    if (!this.anamnesis.sintomasExtra && input.match(/inflam|hincha|rojo|dolor al mover/)) {
+      this.anamnesis.sintomasExtra = input;
+    }
+
+    this.preguntaActualIndex++;
+
+    if (this.preguntaActualIndex < this.preguntasPendientes.length) {
+      this.chatRegistrado.push({
+        idChat: 0,
+        codigoCliente: this.savedKey || '',
+        mensaje: this.preguntasPendientes[this.preguntaActualIndex],
+        idTipoMensaje: 1,
+        fecha: new Date(),
+      });
+
+      localStorage.setItem('chatStorage', JSON.stringify(this.chatRegistrado));
+    } else {
+      // 🔥 TERMINÓ ANAMNESIS
+      this.etapa = 0;
+
+      // 🔥 liberar estado ANTES
+      this.loading = false;
+      this.isProcessing = false;
+
+      // 🔥 llamar directo (SIN setTimeout ni loading)
+      this.procesarExamenesIA();
+    }
+  }
+  private generarPreguntas() {
+    const texto = this.mensajeClave.toLowerCase();
+    let preguntas: string[] = [];
+
+    const tieneTiempo = texto.match(/\d+\s*(día|dias|semana|mes|año)/);
+    const tieneIntensidad = texto.match(/leve|moderado|fuerte|\d\/10/);
+    const tieneLado = texto.match(/derecho|derecha|izquierdo|izquierda/);
+    const tieneInflamacion = texto.match(/inflam|hincha|rojo/);
+
+    // 🔹 1. TIEMPO + INTENSIDAD (pregunta combinada)
+    if (!tieneTiempo || !tieneIntensidad) {
+      preguntas.push(
+        'Cuéntame un poco más: ¿desde cuándo tienes el dolor y qué tan intenso es (1 a 10)?'
+      );
+    }
+
+    // 🔹 2. LADO (CRÍTICO)
+    if (this.requiereLado(texto) && !tieneLado) {
+      preguntas.push('¿El dolor es en el lado derecho o izquierdo?');
+    }
+
+    // 🔹 3. MOVIMIENTO (siempre aporta valor clínico)
     preguntas.push('¿Te duele al moverlo o también en reposo?');
+
+    // 🔹 4. INFLAMACIÓN (si no se ha mencionado)
+    if (!tieneInflamacion) {
+      preguntas.push('¿Has notado inflamación o hinchazón en la zona?');
+    }
+
+    this.preguntasPendientes = preguntas;
+    this.preguntaActualIndex = 0;
+  }
+  private tieneInfoSuficiente(texto: string): boolean {
+    const t = texto.toLowerCase();
+
+    let puntos = 0;
+
+    if (t.match(/\d+\s*(día|dias|semana|mes)/)) puntos++;
+    if (t.match(/leve|moderado|fuerte|\d\/10/)) puntos++;
+    if (t.match(/inflam|hincha|rojo/)) puntos++;
+
+    // 👉 solo valida contexto mínimo (NO lado aquí)
+    return puntos >= 2;
+  }
+  private requiereLado(texto: string): boolean {
+    const t = texto.toLowerCase();
+
+    return /brazo|pierna|mano|muñeca|codo|hombro|rodilla|tobillo/.test(t);
   }
 
-  // 🔹 4. SÍNTOMAS EXTRA
-  if (!texto.match(/inflam|hincha|rojo/)) {
-    preguntas.push('¿Has notado inflamación o hinchazón?');
+
+  private filtrarListaFonasa(): string[] {
+    const texto = this.mensajeClave.toLowerCase();
+
+    // 🔥 palabras clave básicas
+    const keywords = texto.match(/muñeca|mano|codo|rodilla|tobillo|hombro|espalda|columna|pecho|torax|abdomen/);
+
+    if (!keywords) return this.listaFonasa.slice(0, 30); // fallback
+
+    return this.listaFonasa.filter(item =>
+      item.toLowerCase().includes(keywords[0])
+    ).slice(0, 30); // 🔥 límite duro
   }
-
-  this.preguntasPendientes = preguntas;
-  this.preguntaActualIndex = 0;
-}
-private tieneInfoSuficiente(texto: string): boolean {
-  const t = texto.toLowerCase();
-
-  let puntos = 0;
-
-  if (t.match(/\d+\s*(día|dias|semana|mes)/)) puntos++;
-  if (t.match(/leve|moderado|fuerte|\d\/10/)) puntos++;
-  if (t.match(/inflam|hincha|rojo/)) puntos++;
-
-  const tieneLado = t.match(/derecho|izquierdo/);
-
-  // 🔥 REGLA INTELIGENTE:
-  // si tiene buen contexto → continuar aunque no haya lado
-  if (puntos >= 2) return true;
-
-  // si no hay suficiente info → seguir preguntando
-  return false;
-}
 }
